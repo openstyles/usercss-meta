@@ -1,11 +1,11 @@
-# usercss-parser
+# parse-usercss
 > Parse usercss styles supported by the Stylus userstyle manager
 
 
 ## Install
 
 ```
-$ npm install --save usercss-parser
+$ npm install --save parse-usercss
 ```
 
 
@@ -16,7 +16,7 @@ $ npm install --save usercss-parser
 In this release, only the metadata portion of the usercss style is parsed.
 
 ```js
-const usercss = require('usercss-parser');
+const usercss = require('parse-usercss');
 
 usercss.parseMeta(`/* ==UserStyle==
 @name        test
@@ -66,7 +66,7 @@ This module includes several components
 #### Named color reference
 
 ```js
-const {color} = require('usercss-parser');
+const {color} = require('parse-usercss');
 
 color.NAMED_COLORS.get('darkgoldenrod');
 //=> #b8860b
@@ -75,7 +75,7 @@ color.NAMED_COLORS.get('darkgoldenrod');
 #### Color parser
 
 ```js
-const {color} = require('usercss-parser');
+const {color} = require('parse-usercss');
 
 // parse(string)
 color.parse('darkgoldenrod')
@@ -97,7 +97,7 @@ color.parse('hsl(0, 0, 67)');
 #### Color Formatter
 
 ```js
-const {color} = require('usercss-parser');
+const {color} = require('parse-usercss');
 
 // format(color, type, hexUppercase)
 color.format({r: 184, g: 134, b: 11, a: 0.667}, 'hex', true);
@@ -117,7 +117,7 @@ color.format({h: 0, s: 0, l: 66.7, a: 0.667, type: 'hsl'}, 'rgb');
 #### Color conversion
 
 ```js
-const {color} = require('usercss-parser');
+const {color} = require('parse-usercss');
 
 color.RGBtoHSV({r: 184, g: 134, b: 11});
 //=> {h: 42.65895953757225, s: 0.9402173913043479, v: 0.7215686274509804, a: undefined}

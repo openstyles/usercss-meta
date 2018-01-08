@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Parse usercss style used by Stylus extension",
   "license": "MIT",
-  "repository": "StylishThemes/usercss-parser",
+  "repository": "StylishThemes/parse-usercss",
   "author": {
     "name": "StylishThemes",
     "url": "https://github.com/StylishThemes"
