@@ -23,9 +23,6 @@
     "usercss",
     "parser"
   ],
-  "dependencies": {
-    "semver": "^5.4.1"
-  },
   "devDependencies": {
     "ava": "*",
     "deepmerge": "^2.0.1",
