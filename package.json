@@ -37,11 +37,13 @@
       "curly": 0,
       "default-case": 0,
       "import/prefer-default-export": 0,
+      "linebreak-style": 0,
       "new-cap": 0,
       "no-mixed-operators": 0,
       "operator-linebreak": 0,
       "padded-blocks": 0,
       "quote-props": 0,
+      "quotes": [2, "single", {"avoidEscape": true}],
       "unicorn/prefer-starts-ends-with": 0
     }
   }
