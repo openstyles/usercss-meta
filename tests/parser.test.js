@@ -1,8 +1,8 @@
 /* eslint dot-notation: 0 */
 
 import test from 'ava';
-import {createParser} from '../lib/usercss';
-// import {default as styles} from './styles';
+import {createParser, util} from '../lib/usercss';
+
 const parser = createParser();
 const looseParser = createParser({mandatoryKeys: []});
 
@@ -306,4 +306,43 @@ background-color: green; EOT;
       value: 'background-color: green;'
     }
   ]);
+});
+
+test('user parse key', t => {
+  const parser = createParser({
+    mandatoryKeys: [],
+    parseKey: {
+      myKey: state => {
+        util.parseStringToEnd(state);
+        state.value += ' OK';
+      }
+    }
+  });
+  const meta = `
+/* ==UserStyle==
+@myKey Hello
+==/UserStyle== */`.trim();
+
+  t.is(parser.parse(meta).myKey, 'Hello OK');
+});
+
+test('use parse var', t => {
+  const parser = createParser({
+    mandatoryKeys: [],
+    parseVar: {
+      color: state => {
+        util.parseStringToEnd(state);
+        state.value += ' OK';
+      }
+    }
+  });
+  const meta = `
+/* ==UserStyle==
+@var color my-color "My color" #fff
+==/UserStyle== */`.trim();
+
+  const va = parser.parse(meta).vars['my-color'];
+  t.is(va.type, 'color');
+  t.is(va.label, 'My color');
+  t.is(va.default, '#fff OK');
 });
