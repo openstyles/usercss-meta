@@ -12,7 +12,8 @@
     "node": ">=6"
   },
   "scripts": {
-    "test": "xo && ava"
+    "test": "xo && nyc ava",
+    "coverage": "nyc report --reporter=html"
   },
   "files": [
     "index.js"
@@ -26,6 +27,7 @@
   "devDependencies": {
     "ava": "*",
     "deepmerge": "^2.0.1",
+    "nyc": "^11.4.1",
     "xo": "*"
   },
   "xo": {
@@ -43,7 +45,13 @@
       "operator-linebreak": 0,
       "padded-blocks": 0,
       "quote-props": 0,
-      "quotes": [2, "single", {"avoidEscape": true}],
+      "quotes": [
+        2,
+        "single",
+        {
+          "avoidEscape": true
+        }
+      ],
       "unicorn/prefer-starts-ends-with": 0
     }
   }

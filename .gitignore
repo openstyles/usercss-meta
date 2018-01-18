@@ -13,6 +13,8 @@ tmp/
 
 # Build
 node_modules/
+.nyc_output
+coverage
 
 # Windows crap
 Thumbs.db
