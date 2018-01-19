@@ -1,7 +1,7 @@
 /* eslint dot-notation: 0 */
 
 import test from 'ava';
-import {createParser, util} from '../lib/usercss';
+import {createParser, util} from '..';
 
 const parser = createParser();
 const looseParser = createParser({mandatoryKeys: []});
