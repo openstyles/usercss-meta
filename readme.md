@@ -1,5 +1,5 @@
 # parse-usercss
-> Parse usercss styles supported by the Stylus userstyle manager
+> Parse usercss metadata supported by the Stylus userstyle manager
 
 
 ## Install
@@ -11,128 +11,138 @@ $ npm install --save parse-usercss
 
 ## Usage
 
-### Parser
-
-In this release, only the metadata portion of the usercss style is parsed.
-
 ```js
-const usercss = require('parse-usercss');
+const {parseUsercss} = require('parse-usercss');
 
-usercss.parseMeta(`/* ==UserStyle==
+parseUsercss(`/* ==UserStyle==
 @name        test
 @namespace   github.com/openstyles/stylus
 @version     0.1.0
 @description my userstyle
 @author      Me
 @var text my-color "Select a color" #123456
-==/UserStyle== */
-@-moz-document domain("example.com") {
- /* */
-}`);
+==/UserStyle== */`);
 
 /* => {
-  author: 'Me',
-  description: 'my userstyle',
-  enabled: true,
-  name: 'test',
-  reason: 'install',
-  sections: [],
-  sourceCode: "/* ==UserStyle==\n  @name        test\n  @namespace   github.com/openstyles/stylus\n  @version     0.1.0\n  @description my userstyle\n  @author      Me\n  @var color font-color 'Font-color' #123456\n  ==/UserStyle==\n *\/\n  @-moz-document domain("example.com") {\n   /* *\/\n  }",
-  usercssData: {
-    "vars": {
-      "my-color": {
-        "type": "text",
-        "label": "Select a color",
-        "name": "my-color",
-        "value": null,
-        "default": "#123456",
-        "options": null
-      }
-    },
-    "name": "test",
-    "namespace": "github.com/openstyles/stylus",
-    "version": "0.1.0",
-    "description": "my userstyle",
-    "author": "Me"
+  "vars": {
+    "my-color": {
+      "type": "text",
+      "label": "Select a color",
+      "name": "my-color",
+      "value": null,
+      "default": "#123456",
+      "options": null
+    }
   },
+  "name": "test",
+  "namespace": "github.com/openstyles/stylus",
+  "version": "0.1.0",
+  "description": "my userstyle",
+  "author": "Me"
 }
 */
 ```
 
-### Color
+## API Reference
 
-This module includes several components
+This module exports following members:
 
-#### Named color reference
+* `parseUsercss`: Function. Parse metadata and return an object.
+* `createParser`: Function. Create a metadata parser.
+* `ParseError`: Class.
+* `util`: Object. A collection of parser utilities.
 
-```js
-const {color} = require('parse-usercss');
+### parseUsercss(metadata: string, options?: object): object
 
-color.NAMED_COLORS.get('darkgoldenrod');
-//=> #b8860b
-```
-
-#### Color parser
+This is a shortcut of
 
 ```js
-const {color} = require('parse-usercss');
-
-// parse(string)
-color.parse('darkgoldenrod')
-//=> {r: 184, g: 134, b: 11, a: undefined, type: 'hex'}
-
-color.parse('#b8860b');
-//=> {r: 184, g: 134, b: 11, a: undefined, type: 'hex'}
-
-color.parse('#b8860baa');
-//=> {r: 184, g: 134, b: 11, a: 0.6666666666666666, type: 'hex'}
-
-color.parse('rgb(184, 134, 11)');
-//=> {r: 184, g: 134, b: 11, a: 1, type: 'rgb'}
-
-color.parse('hsl(0, 0, 67)');
-//=> {h: 0, s: 0, l: 67, a: 1, type: 'hsl'}
+createParser(options).parse(metadata);
 ```
 
-#### Color Formatter
+### createParser(options?: object): Parser object
 
-```js
-const {color} = require('parse-usercss');
+`options` may contain following properties:
 
-// format(color, type, hexUppercase)
-color.format({r: 184, g: 134, b: 11, a: 0.667}, 'hex', true);
-//=> #B8860BAA
+* `unknownKey`: String. Change the behavior when an unknown key is parsed. Possible values are:
 
-color.format({r: 184, g: 134, b: 11}, 'rgb');
-//=> rgb(184, 134, 11)
+  - `ignore`: The directive is ignored. Default.
+  - `assign`: Assign the text value (characters before `\s*\n`) to result object.
+  - `throw`: Throw a ParseError.
 
-color.format({h: 0, s: 0, l: 67, a: 0.667}, 'hsl');
-//=> hsla(0, 0%, 67%, .667)
+* `mandatoryKeys`: Array&lt;string>. Mark multiple keys as mandatory. If the key is missing in the metadata, the parser would throw an error. Default: `['name', 'namespace', 'version']`
+* `parseKey`: Object. Extend the parser to parse additional keys. The object is a map of `key: parseFunction` pair. For example:
 
-// type: 'hsl' is required in this case!
-color.format({h: 0, s: 0, l: 66.7, a: 0.667, type: 'hsl'}, 'rgb');
-//=> rgba(170, 170, 170, .667)
-```
+  ```js
+  const parser = createParser({
+    mandatoryKeys: [],
+    parseKey: {
+      myKey: state => {
+        const rx = /\d+/y;
+        rx.lastIndex = state.lastIndex;
+        const match = rx.exec(state.text);
+        if (!match) {
+          throw new ParseError('value must be numbers', state, state.lastIndex);
+        }
+        state.index = match.index;
+        state.lastIndex = rx.lastIndex;
+        state.value = match[0];
+      }
+    }
+  });
+  const result = parser.parse(`/* ==UserStyle==
+  @myKey 123456
+  ==/UserStyle==`);
+  assert(result.myKey === '123456');
+  ```
 
-#### Color conversion
+* `parseVar`: Object. Extend the parser to parse additional variable types. The object is a map of `varType: parseFunction` pair. For example:
 
-```js
-const {color} = require('parse-usercss');
+  ```js
+  const parser = createParser({
+    mandatoryKeys: [],
+    parseVar: {
+      myvar: state => {
+        const rx = /\d+/y;
+        rx.lastIndex = state.lastIndex;
+        const match = rx.exec(state.text);
+        if (!match) {
+          throw new ParseError('value must be numbers', state, state.lastIndex);
+        }
+        state.index = match.index;
+        state.lastIndex = rx.lastIndex;
+        state.value = match[0];
+      }
+    }
+  });
+  const result = parser.parse(`/* ==UserStyle==
+  @var myvar var-name 'Customized variable' 123456
+  ==/UserStyle== */`);
+  const va = result.vars['var-name'];
+  assert(va.type === 'myvar');
+  assert(va.label === 'Customized variable');
+  assert(va.default === '123456');
+  ```
 
-color.RGBtoHSV({r: 184, g: 134, b: 11});
-//=> {h: 42.65895953757225, s: 0.9402173913043479, v: 0.7215686274509804, a: undefined}
+This function returns a parser object which contains following members:
 
-// alpha channel isn't supported
-color.HSVtoRGB({h: 42, s: 0.9, v: 0.7})
-//=> {r: 179, g: 130, b: 18}
+* `parse(text: string): ParseResult object`: Function. Parse the string into a result object.
 
-color.HSLtoHSV({h: 43, l: 38, s: 89, a: undefined});
-//=> {h: 43, s: 0.9417989417989419, v: 0.7182, a: undefined}
+### new ParseError(message, state: object, index: number)
 
-// alpha channel isn't supported
-color.HSVtoHSL({h: 42, s: 0.9, v: 0.7})
-//=> {h: 42, s: 82, l: 39}
-```
+Use this class to initiate a parse error. When catching the error, `state` and `index` can be accessed from `error.state` and `error.index`.
+
+### util
+
+A collection of parser utilities. Some of them might be useful when extending the parser.
+
+* `eatWhitespace(state)`: Move `state.lastIndex` to next non-whitespace character.
+* `parseEOT(state)`: Parse EOT multiline string used by xStyle extension.
+* `parseJSON(state)`: Parse JSON value. Note that the JSON parser can parse some additional syntax like single quoted string, backtick quoted multiline string, etc.
+* `parseNumber(state)`: Parse numbers.
+* `parseString(state)`: Parse quoted string.
+* `parseStringToEnd(state)`: Parse the text value before line feed.
+* `parseWord(state)`: Parse a word. (`[\w-]+`)
 
 ## Related
 
