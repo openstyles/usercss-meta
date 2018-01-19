@@ -96,7 +96,7 @@ function parseVarSelect(state) {
   state.value = state.varResult.options[0].name;
 }
 
-function parseVarEOT(state) {
+function parseVarXStyle(state) {
   const pos = state.lastIndex;
   if (state.text[state.lastIndex] !== '{') {
     throw new ParseError('no open {', state, pos);
@@ -328,7 +328,7 @@ function createParser({
     } else if (state.type === 'select' || state.type === 'image' && state.key === 'var') {
       parseVarSelect(state);
     } else if (state.type === 'dropdown' || state.type === 'image') {
-      parseVarEOT(state);
+      parseVarXStyle(state);
     } else {
       // color, text
       parseStringToEnd(state);
@@ -339,7 +339,7 @@ function createParser({
 
   function parse(text) {
     if (text.includes('\r')) {
-      throw new TypeError("sourceCode includes invalid character: '\\r'");
+      throw new TypeError("metadata includes invalid character: '\\r'");
     }
 
     const usercssData = {

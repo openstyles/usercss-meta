@@ -1,7 +1,7 @@
 /* eslint dot-notation: 0 */
 
 import test from 'ava';
-import {createParser, util} from '..';
+import {createParser, util, parseUsercss} from '..';
 
 const parser = createParser();
 const looseParser = createParser({mandatoryKeys: []});
@@ -129,6 +129,17 @@ test('basic @var select', t => {
   ]);
 });
 
+test('basic @var select error', t => {
+  const meta = `
+/* ==UserStyle==
+@var select nav-pos "Navbar pos" {}
+==/UserStyle== */`.trim();
+
+  const error = t.throws(() => looseParser.parse(meta));
+  t.is(error.message, 'Option list is empty');
+  t.is(error.index, 50);
+});
+
 test('basic @var select with built-in label', t => {
   const meta = `
 /* ==UserStyle==
@@ -216,6 +227,17 @@ test('basic @var checkbox', t => {
   t.is(va.default, '1');
 });
 
+test('basic @var checkbox error', t => {
+  const meta = `
+/* ==UserStyle==
+@var checkbox affix "Set affixed" 2
+==/UserStyle== */`.trim();
+
+  const error = t.throws(() => looseParser.parse(meta));
+  t.is(error.message, 'value must be 0 or 1');
+  t.is(error.index, 51);
+});
+
 test('basic @var text', t => {
   const meta = `
 /* ==UserStyle==
@@ -279,6 +301,28 @@ test('basic @advanced image', t => {
   ]);
 });
 
+test('basic @advanced image error', t => {
+  const meta = `
+/* ==UserStyle==
+@advanced image background "Page background" []
+==/UserStyle== */`.trim();
+
+  const error = t.throws(() => looseParser.parse(meta));
+  t.is(error.index, 62);
+  t.is(error.message, 'no open {');
+});
+
+test('basic @advanced image error empty', t => {
+  const meta = `
+/* ==UserStyle==
+@advanced image background "Page background" {}
+==/UserStyle== */`.trim();
+
+  const error = t.throws(() => looseParser.parse(meta));
+  t.is(error.index, 62);
+  t.is(error.message, 'Option list is empty');
+});
+
 test('basic @advanced dropdown', t => {
   const meta = `
 /* ==UserStyle==
@@ -308,6 +352,88 @@ background-color: green; EOT;
   ]);
 });
 
+test('unknown var type', t => {
+  const meta = `
+/* ==UserStyle==
+@var unknown my-var "My variable" 123456
+==/UserStyle== */`.trim();
+  const error = t.throws(() => looseParser.parse(meta));
+  t.is(error.index, 22);
+  t.is(error.message, 'unknown type: unknown');
+});
+
+test('invalid characters', t => {
+  const meta = '\r';
+  const error = t.throws(() => looseParser.parse(meta));
+  t.is(error.message, "metadata includes invalid character: '\\r'");
+});
+
+test('unknownKey ignore', t => {
+  const meta = `
+/* ==UserStyle==
+@myKey 123456
+==/UserStyle== */`;
+
+  const result = parseUsercss(meta, {unknownKey: 'ignore', mandatoryKeys: []});
+  t.is(result.myKey, undefined);
+});
+
+test('unknownKey assign', t => {
+  const meta = `
+/* ==UserStyle==
+@myKey 123 456
+==/UserStyle== */`;
+
+  const result = parseUsercss(meta, {unknownKey: 'assign', mandatoryKeys: []});
+  t.is(result.myKey, '123 456');
+});
+
+test('unknownKey throw', t => {
+  const meta = `
+/* ==UserStyle==
+@myKey 123 456
+==/UserStyle== */`.trim();
+
+  const error = t.throws(() => {
+    parseUsercss(meta, {unknownKey: 'throw', mandatoryKeys: []});
+  });
+  t.is(error.index, 17);
+  t.is(error.message, 'Unknown metadata @myKey');
+});
+
+test('unknownKey invalid', t => {
+  const meta = `
+/* ==UserStyle==
+@myKey 123 456
+==/UserStyle== */`.trim();
+
+  const error = t.throws(() => {
+    parseUsercss(meta, {unknownKey: 'invalid', mandatoryKeys: []});
+  });
+  t.is(error.message, "unknownKey must be 'ignore', 'assign', or 'throw'");
+});
+
+test('basic URLs', t => {
+  const meta = `
+/* ==UserStyle==
+@homepageURL https://github.com/StylishThemes/parse-usercss
+==/UserStyle== */`.trim();
+
+  const result = looseParser.parse(meta);
+  t.is(result.homepageURL, 'https://github.com/StylishThemes/parse-usercss');
+});
+
+test('basic URLs error', t => {
+  const meta = `
+/* ==UserStyle==
+@homepageURL file:///C:/windows
+==/UserStyle== */`.trim();
+
+  const error = t.throws(() => looseParser.parse(meta));
+  t.is(error.message, 'file: is not a valid protocol');
+  t.is(error.index, 30);
+});
+
 test('user parse key', t => {
   const parser = createParser({
     mandatoryKeys: [],
@@ -326,7 +452,7 @@ test('user parse key', t => {
   t.is(parser.parse(meta).myKey, 'Hello OK');
 });
 
-test('use parse var', t => {
+test('user parse var', t => {
   const parser = createParser({
     mandatoryKeys: [],
     parseVar: {
@@ -345,4 +471,130 @@ test('use parse var', t => {
   t.is(va.type, 'color');
   t.is(va.label, 'My color');
   t.is(va.default, '#fff OK');
+});
+
+test('parseWord error', t => {
+  const error = t.throws(() => util.parseWord({
+    text: 'something *',
+    lastIndex: 10
+  }));
+  t.is(error.index, 10);
+  t.is(error.message, 'invalid word');
+});
+
+test('parseJSON error', t => {
+  const error = t.throws(() => util.parseJSON({
+    text: 'something [abc]',
+    lastIndex: 10
+  }));
+  t.is(error.index, 11);
+  t.is(error.message, "Invalid JSON: unknown literal 'abc'");
+});
+
+test('parseJSON object error', t => {
+  const error = t.throws(() => util.parseJSON({
+    text: '{"a", "b"}',
+    lastIndex: 0
+  }));
+  t.is(error.index, 4);
+  t.is(error.message, "Invalid JSON: missing ':'");
+});
+
+test('parseJSON object error 2', t => {
+  const error = t.throws(() => util.parseJSON({
+    text: '{"a": "b" "c"}',
+    lastIndex: 0
+  }));
+  t.is(error.index, 10);
+  t.is(error.message, "Invalid JSON: missing ',' or '}'");
+});
+
+test('parseJSON array error', t => {
+  const error = t.throws(() => util.parseJSON({
+    text: '["a" "b"]',
+    lastIndex: 0
+  }));
+  t.is(error.index, 5);
+  t.is(error.message, "Invalid JSON: missing ',' or ']'");
+});
+
+test('parseJSON multiline string', t => {
+  const state = {
+    text: '`a\nb`',
+    lastIndex: 0
+  };
+  util.parseJSON(state);
+  t.is(state.index, 0);
+  t.is(state.lastIndex, 5);
+  t.is(state.value, 'a\nb');
+});
+
+test('parseJSON number', t => {
+  const state = {
+    text: '123',
+    lastIndex: 0
+  };
+  util.parseJSON(state);
+  t.is(state.index, 0);
+  t.is(state.lastIndex, 3);
+  t.is(state.value, 123);
+});
+
+test('parseJSON prime', t => {
+  const state = {
+    text: '[true, false, null]',
+    lastIndex: 0
+  };
+  util.parseJSON(state);
+  t.is(state.index, 0);
+  t.is(state.lastIndex, 19);
+  t.deepEqual(state.value, [true, false, null]);
+});
+
+test('parseEOT error', t => {
+  const error = t.throws(() => util.parseEOT({
+    text: 'something <<<EOT',
+    lastIndex: 10
+  }));
+  t.is(error.index, 10);
+  t.is(error.message, 'missing EOT');
+});
+
+test('parseString backtick', t => {
+  const state = {
+    text: 'something `a\nb`',
+    lastIndex: 10
+  };
+  util.parseString(state);
+  t.is(state.value, 'a\nb');
+});
+
+test('parseString escape chars', t => {
+  const state = {
+    text: '"a\\"b\\nc"',
+    lastIndex: 0
+  };
+  util.parseString(state);
+  t.is(state.lastIndex, 9);
+  t.is(state.value, 'a"b\nc');
+});
+
+test('parseString error', t => {
+  const state = {
+    text: 'something ~abc~',
+    lastIndex: 10
+  };
+  const error = t.throws(() => util.parseString(state));
+  t.is(error.index, 10);
+  t.is(error.message, 'Quoted string expected');
+});
+
+test('parseNumber error', t => {
+  const state = {
+    text: 'o123',
+    lastIndex: 0
+  };
+  const error = t.throws(() => util.parseNumber(state));
+  t.is(error.index, 0);
+  t.is(error.message, 'invalid number');
 });
