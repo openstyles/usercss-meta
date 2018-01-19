@@ -26,7 +26,6 @@
   ],
   "devDependencies": {
     "ava": "*",
-    "deepmerge": "^2.0.1",
     "nyc": "^11.4.1",
     "xo": "*"
   },
