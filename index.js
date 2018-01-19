@@ -416,6 +416,9 @@ function normalizeVersion(version) {
 }
 
 module.exports = {
+  parseUsercss(text, options) {
+    return createParser(options).parse(text);
+  },
   createParser,
   ParseError,
   util: {
