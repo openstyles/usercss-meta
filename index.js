@@ -49,7 +49,7 @@ class ParseError extends Error {
 }
 
 function parseWord(state, error = 'invalid word') {
-  const pos = state.re.lastIndex;
+  const pos = state.lastIndex;
   RX_WORD.lastIndex = pos;
   const match = RX_WORD.exec(state.text);
   if (!match) {
@@ -57,11 +57,11 @@ function parseWord(state, error = 'invalid word') {
   }
   state.index = pos;
   state.value = match[1];
-  state.re.lastIndex += match[0].length;
+  state.lastIndex += match[0].length;
 }
 
 function parseVarCheckbox(state) {
-  const pos = state.re.lastIndex;
+  const pos = state.lastIndex;
   RX_CHECKBOX.lastIndex = pos;
   const match = state.text.match(RX_CHECKBOX);
   if (!match) {
@@ -69,11 +69,11 @@ function parseVarCheckbox(state) {
   }
   state.index = pos;
   state.value = match[1];
-  state.re.lastIndex += match[0].length;
+  state.lastIndex += match[0].length;
 }
 
 function parseJSON(state) {
-  const pos = state.re.lastIndex;
+  const pos = state.lastIndex;
   try {
     parseJSONValue(state);
   } catch (err) {
@@ -97,13 +97,13 @@ function parseVarSelect(state) {
 }
 
 function parseVarEOT(state) {
-  const pos = state.re.lastIndex;
-  if (state.text[state.re.lastIndex] !== '{') {
+  const pos = state.lastIndex;
+  if (state.text[state.lastIndex] !== '{') {
     throw new ParseError('no open {', state, pos);
   }
   state.varResult.options = [];
-  state.re.lastIndex++;
-  while (state.text[state.re.lastIndex] !== '}') {
+  state.lastIndex++;
+  while (state.text[state.lastIndex] !== '}') {
     const option = {};
 
     parseStringUnquoted(state);
@@ -121,7 +121,7 @@ function parseVarEOT(state) {
 
     state.varResult.options.push(option);
   }
-  state.re.lastIndex++;
+  state.lastIndex++;
   eatWhitespace(state);
   if (state.varResult.options.length === 0) {
     throw new ParseError('Option list is empty', state, pos);
@@ -145,28 +145,28 @@ function createOption(label, value) {
 }
 
 function parseEOT(state) {
-  const pos = state.re.lastIndex;
+  const pos = state.lastIndex;
   RX_EOT.lastIndex = pos;
   const match = state.text.match(RX_EOT);
   if (!match) {
     throw new ParseError('missing EOT', state, pos);
   }
   state.index = pos;
-  state.re.lastIndex += match[0].length;
+  state.lastIndex += match[0].length;
   state.value = match[1].trim().replace(/\*\\\//g, '*/');
   eatWhitespace(state);
 }
 
 function parseStringUnquoted(state) {
-  const pos = state.re.lastIndex;
+  const pos = state.lastIndex;
   const nextQuoteOrEOL = posOrEnd(state.text, '"', pos);
   state.index = pos;
-  state.re.lastIndex = nextQuoteOrEOL;
+  state.lastIndex = nextQuoteOrEOL;
   state.value = state.text.slice(pos, nextQuoteOrEOL).trim().replace(/\s+/g, '-');
 }
 
 function parseString(state) {
-  const pos = state.re.lastIndex;
+  const pos = state.lastIndex;
   const rx = state.text[pos] === '`' ? RX_STRING_BACKTICK : RX_STRING_QUOTED;
   rx.lastIndex = pos;
   const match = rx.exec(state.text);
@@ -174,59 +174,59 @@ function parseString(state) {
     throw new ParseError('Quoted string expected', state, pos);
   }
   state.index = pos;
-  state.re.lastIndex += match[0].length;
+  state.lastIndex += match[0].length;
   state.value = unquote(match[1]);
 }
 
 function parseJSONValue(state) {
-  const {text, re} = state;
-  if (text[re.lastIndex] === '{') {
+  const {text} = state;
+  if (text[state.lastIndex] === '{') {
     // object
     const obj = {};
-    re.lastIndex++;
+    state.lastIndex++;
     eatWhitespace(state);
-    while (text[re.lastIndex] !== '}') {
+    while (text[state.lastIndex] !== '}') {
       parseString(state);
       const key = state.value;
-      if (text[re.lastIndex] !== ':') {
-        throw new ParseError("missing ':'", state, re.lastIndex);
+      if (text[state.lastIndex] !== ':') {
+        throw new ParseError("missing ':'", state, state.lastIndex);
       }
-      re.lastIndex++;
+      state.lastIndex++;
       eatWhitespace(state);
       parseJSONValue(state);
       obj[key] = state.value;
-      if (text[re.lastIndex] === ',') {
-        re.lastIndex++;
+      if (text[state.lastIndex] === ',') {
+        state.lastIndex++;
         eatWhitespace(state);
-      } else if (text[re.lastIndex] !== '}') {
-        throw new ParseError("missing ',' or '}'", state, re.lastIndex);
+      } else if (text[state.lastIndex] !== '}') {
+        throw new ParseError("missing ',' or '}'", state, state.lastIndex);
       }
     }
-    re.lastIndex++;
+    state.lastIndex++;
     eatWhitespace(state);
     state.value = obj;
-  } else if (text[re.lastIndex] === '[') {
+  } else if (text[state.lastIndex] === '[') {
     // array
     const arr = [];
-    re.lastIndex++;
+    state.lastIndex++;
     eatWhitespace(state);
-    while (text[re.lastIndex] !== ']') {
+    while (text[state.lastIndex] !== ']') {
       parseJSONValue(state);
       arr.push(state.value);
-      if (text[re.lastIndex] === ',') {
-        re.lastIndex++;
+      if (text[state.lastIndex] === ',') {
+        state.lastIndex++;
         eatWhitespace(state);
-      } else if (text[re.lastIndex] !== ']') {
-        throw new ParseError("missing ',' or ']'", state, re.lastIndex);
+      } else if (text[state.lastIndex] !== ']') {
+        throw new ParseError("missing ',' or ']'", state, state.lastIndex);
       }
     }
-    re.lastIndex++;
+    state.lastIndex++;
     eatWhitespace(state);
     state.value = arr;
-  } else if (text[re.lastIndex] === '"' || text[re.lastIndex] === "'" || text[re.lastIndex] === '`') {
+  } else if (text[state.lastIndex] === '"' || text[state.lastIndex] === "'" || text[state.lastIndex] === '`') {
     // string
     parseString(state);
-  } else if (/\d/.test(text[re.lastIndex])) {
+  } else if (/\d/.test(text[state.lastIndex])) {
     // number
     parseNumber(state);
   } else {
@@ -239,7 +239,7 @@ function parseJSONValue(state) {
 }
 
 function parseNumber(state) {
-  const pos = state.re.lastIndex;
+  const pos = state.lastIndex;
   RX_NUMBER.lastIndex = pos;
   const match = RX_NUMBER.exec(state.text);
   if (!match) {
@@ -247,20 +247,20 @@ function parseNumber(state) {
   }
   state.index = pos;
   state.value = Number(match[0].trim());
-  state.re.lastIndex += match[0].length;
+  state.lastIndex += match[0].length;
 }
 
 function eatWhitespace(state) {
-  RX_WHITESPACE.lastIndex = state.re.lastIndex;
-  state.re.lastIndex += RX_WHITESPACE.exec(state.text)[0].length;
+  RX_WHITESPACE.lastIndex = state.lastIndex;
+  state.lastIndex += RX_WHITESPACE.exec(state.text)[0].length;
 }
 
 function parseStringToEnd(state) {
-  const EOL = posOrEnd(state.text, '\n', state.re.lastIndex);
-  const match = state.text.slice(state.re.lastIndex, EOL);
-  state.index = state.re.lastIndex;
+  const EOL = posOrEnd(state.text, '\n', state.lastIndex);
+  const match = state.text.slice(state.lastIndex, EOL);
+  state.index = state.lastIndex;
   state.value = unquote(match.trim());
-  state.re.lastIndex += match.length;
+  state.lastIndex += match.length;
 }
 
 function unquote(s) {
@@ -347,11 +347,13 @@ function createParser({
     };
 
     const re = /@(\w+)[ \t\xA0]*/mg;
-    const state = {index: 0, re, text, usercssData};
+    const state = {index: 0, lastIndex: 0, text, usercssData};
 
     // parse
     let match;
     while ((match = re.exec(text))) {
+      state.index = match.index;
+      state.lastIndex = re.lastIndex;
       state.key = match[1];
       if (!knownKeys.has(state.key)) {
         if (unknownKey === 'ignore') {
@@ -359,7 +361,7 @@ function createParser({
         } else if (unknownKey === 'assign') {
           // pass
         } else if (unknownKey === 'throw') {
-          throw new ParseError(`Unknown metadata @${state.key}`, state, match.index);
+          throw new ParseError(`Unknown metadata @${state.key}`, state);
         } else {
           throw new TypeError("unknownKey must be 'ignore', 'assign', or 'throw'");
         }
@@ -391,6 +393,8 @@ function createParser({
         parseStringToEnd(state);
       }
       usercssData[state.key] = state.value;
+
+      re.lastIndex = state.lastIndex;
     }
 
     if (state.maybeUSO && !usercssData.preprocessor) {
