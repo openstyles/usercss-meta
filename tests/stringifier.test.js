@@ -227,6 +227,21 @@ test('user stringify key', t => {
 ==/UserStyle== */`);
 });
 
+test('user stringify key multiple', t => {
+  const meta = {
+    myKey: ['foo', 'bar']
+  };
+  const stringifier = createStringifier({
+    stringifyKey: {
+      myKey: value => value.map(v => `${v} OK`)
+    }
+  });
+  t.is(stringifier.stringify(meta), `/* ==UserStyle==
+@myKey foo OK
+@myKey bar OK
+==/UserStyle== */`);
+});
+
 test('user stringify var', t => {
   const meta = {
     vars: {
