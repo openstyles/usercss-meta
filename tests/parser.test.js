@@ -1,7 +1,7 @@
 /* eslint dot-notation: 0 */
 
 import test from 'ava';
-import {createParser, util, parseUsercss} from '..';
+import {createParser, util, parse} from '..';
 
 const parser = createParser();
 const looseParser = createParser({mandatoryKeys: []});
@@ -374,7 +374,7 @@ test('unknownKey ignore', t => {
 @myKey 123456
 ==/UserStyle== */`;
 
-  const result = parseUsercss(meta, {unknownKey: 'ignore', mandatoryKeys: []});
+  const result = parse(meta, {unknownKey: 'ignore', mandatoryKeys: []});
   t.is(result.myKey, undefined);
 });
 
@@ -384,7 +384,7 @@ test('unknownKey assign', t => {
 @myKey 123 456
 ==/UserStyle== */`;
 
-  const result = parseUsercss(meta, {unknownKey: 'assign', mandatoryKeys: []});
+  const result = parse(meta, {unknownKey: 'assign', mandatoryKeys: []});
   t.is(result.myKey, '123 456');
 });
 
@@ -395,7 +395,7 @@ test('unknownKey throw', t => {
 ==/UserStyle== */`.trim();
 
   const error = t.throws(() => {
-    parseUsercss(meta, {unknownKey: 'throw', mandatoryKeys: []});
+    parse(meta, {unknownKey: 'throw', mandatoryKeys: []});
   });
   t.is(error.index, 17);
   t.is(error.message, 'Unknown metadata @myKey');
@@ -408,7 +408,7 @@ test('unknownKey invalid', t => {
 ==/UserStyle== */`.trim();
 
   const error = t.throws(() => {
-    parseUsercss(meta, {unknownKey: 'invalid', mandatoryKeys: []});
+    parse(meta, {unknownKey: 'invalid', mandatoryKeys: []});
   });
   t.is(error.message, "unknownKey must be 'ignore', 'assign', or 'throw'");
 });
