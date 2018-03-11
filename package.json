@@ -13,11 +13,16 @@
   },
   "scripts": {
     "test": "xo && nyc ava",
-    "coverage": "nyc report --reporter=html"
+    "build": "shx rm -rf dist && rollup -c && rollup -c --environment=UGLIFY",
+    "coverage": "nyc report --reporter=html",
+    "prepack": "npm run build"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "lib",
+    "dist"
   ],
+  "unpkg": "dist/usercss-meta.js",
   "keywords": [
     "css",
     "color",
@@ -27,6 +32,10 @@
   "devDependencies": {
     "ava": "*",
     "nyc": "^11.4.1",
+    "rollup": "^0.56.5",
+    "rollup-plugin-commonjs": "^9.0.0",
+    "rollup-plugin-uglify": "^3.0.0",
+    "shx": "^0.2.2",
     "xo": "*"
   },
   "xo": {
