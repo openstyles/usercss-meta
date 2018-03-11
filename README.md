@@ -12,9 +12,9 @@ $ npm install --save parse-usercss
 ## Usage
 
 ```js
-const {parseUsercss} = require('parse-usercss');
+const usercssMeta = require('parse-usercss');
 
-parseUsercss(`/* ==UserStyle==
+const data = usercssMeta.parse(`/* ==UserStyle==
 @name        test
 @namespace   github.com/openstyles/stylus
 @version     0.1.0
@@ -41,18 +41,36 @@ parseUsercss(`/* ==UserStyle==
   "author": "Me"
 }
 */
+
+usercssMeta.stringify(data, {alignKeys: true});
+
+/* => `/* ==UserStyle==
+@name        test
+@namespace   github.com/openstyles/stylus
+@version     0.1.0
+@description my userstyle
+@author      Me
+@var         text my-color "Select a color" #123456
+==/UserStyle== *\/`
+
+*/
 ```
 
 ## API Reference
 
 This module exports following members:
 
-* `parseUsercss`: Function. Parse metadata and return an object.
-* `createParser`: Function. Create a metadata parser.
-* `ParseError`: Class.
-* `util`: Object. A collection of parser utilities.
+* To parse metadata:
+  * `parse`: Function. Parse metadata and return an object.
+  * `createParser`: Function. Create a metadata parser.
+  * `ParseError`: Class.
+  * `util`: Object. A collection of parser utilities.
+* To stringify metadata:
+  * `stringify`: Function. Stringify metadata object and return the string.
+  * `createStringifier`: Function. Create a metadata stringifier.
 
-### parseUsercss(metadata: string, options?: object): object
+
+### parse(metadata: string, options?: object): object
 
 This is a shortcut of
 
@@ -143,6 +161,39 @@ A collection of parser utilities. Some of them might be useful when extending th
 * `parseString(state)`: Parse quoted string.
 * `parseStringToEnd(state)`: Parse the text value before line feed.
 * `parseWord(state)`: Parse a word. (`[\w-]+`)
+
+### stringify(metadata: object, options?: object): string
+
+This is a shortcut of:
+
+```js
+createStringifier(options).stringify(metadata);
+```
+
+### createStringifier(options?: object): Stringifier object
+
+`options` may contain following properties:
+
+* `alignKeys`: Boolean. Decide whether to align metadata keys. Default: `false`.
+* `space`: Number|String. Same as the `space` parameter for `JSON.stringify`.
+* `format`: String. Possible values are `'stylus'` and `'xstyle'`. This changes how variables are stringified (`@var` v.s. `@advanced`). Default: `'stylus'`.
+* `stringifyKey`: Object. Extend the stringifier to handle specified keys.
+
+  The object is a map of `key: stringifyFunction` pair. `stringifyFunction` would recieve one argument:
+
+  - `value`: The value of the key, which is the same as `metadataObject[key]`.
+
+  The function should return a string or an array of strings.
+
+* `stringifyVar`: Object. Extend the stringifier to handle custom variable type.
+
+  The object is a map of `varType: stringifyFunction` pair. The function would recieve three arguments:
+
+  - `variable`: The variable which should be stringified, which is the same as `metadataObject.vars[variable.name]`.
+  - `format`: The `format` parameter of the option.
+  - `space`: The `space` parameter of the option.
+
+  The function should return a string which represents the *default value* of the variable.
 
 ## Related
 
