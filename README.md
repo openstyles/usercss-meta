@@ -8,6 +8,11 @@
 $ npm install --save parse-usercss
 ```
 
+Via CDN:
+
+* <https://unpkg.com/usercss-meta/dist/usercss-meta.js>
+* <https://unpkg.com/usercss-meta/dist/usercss-meta.min.js>
+
 
 ## Usage
 
