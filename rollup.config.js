@@ -1,22 +1,28 @@
-import commonjs from 'rollup-plugin-commonjs';
+import cjs from 'rollup-plugin-cjs-es';
 import uglify from 'rollup-plugin-uglify';
+import shim from 'rollup-plugin-shim';
 
 const {UGLIFY} = process.env;
-const plugins = [commonjs()];
+const plugins = [
+  shim({
+    url: `export const URL = self.URL;`
+  }),
+  cjs()
+];
 
 if (UGLIFY) {
   plugins.push(uglify());
 }
 
 export default {
-  input: 'bundle.js',
+  input: 'index.js',
   output: {
     file: `dist/usercss-meta${UGLIFY ? '.min' : ''}.js`,
     format: 'iife',
     name: 'usercssMeta',
-    globals: {
-      url: 'window'
-    }
+    freeze: false,
+    legacy: true,
+    sourcemap: true
   },
   plugins
 };
