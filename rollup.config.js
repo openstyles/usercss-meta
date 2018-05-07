@@ -5,7 +5,7 @@ import shim from 'rollup-plugin-shim';
 const {UGLIFY} = process.env;
 const plugins = [
   shim({
-    url: `export const URL = self.URL;`
+    url: 'export const URL = self.URL;'
   }),
   cjs()
 ];
