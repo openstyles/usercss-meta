@@ -1,7 +1,7 @@
 {
-  "name": "parse-usercss",
+  "name": "usercss-meta",
   "version": "0.1.0",
-  "description": "Parse usercss style used by Stylus extension",
+  "description": "Parse the metadata of usercss used by Stylus extension",
   "license": "MIT",
   "repository": "StylishThemes/parse-usercss",
   "author": {
@@ -15,7 +15,9 @@
     "test": "xo && nyc ava",
     "build": "shx rm -rf dist && rollup -c && rollup -c --environment=UGLIFY",
     "coverage": "nyc report --reporter=html",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "preversion": "node prepare-release.js && npm test",
+    "postversion": "git push --follow-tags && npm publish"
   },
   "files": [
     "index.js",
@@ -25,9 +27,10 @@
   "unpkg": "dist/usercss-meta.js",
   "keywords": [
     "css",
-    "color",
     "usercss",
-    "parser"
+    "parser",
+    "parse",
+    "stringify"
   ],
   "devDependencies": {
     "ava": "*",
