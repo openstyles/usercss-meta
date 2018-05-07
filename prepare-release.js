@@ -1,17 +1,20 @@
 const {execSync} = require('child_process');
 
-const remote = 'StylishThemes/parse-usercss';
+const repoName = 'StylishThemes/parse-usercss';
 
 function exec(command) {
   return execSync(command, {encoding: 'utf8'});
 }
 
-if (!exec('git status').includes('On branch master')) {
+const status = exec('git status');
+if (!status.includes('On branch master')) {
   throw new Error('Must release on master branch');
 }
 
-if (!exec('git remote get-url origin').includes(remote)) {
-  throw new Error(`Remote must be ${remote}`);
+const remote = exec('git remote show origin');
+if (!remote.match(/Push\s+URL:(.+)/)[1].includes(repoName)) {
+  throw new Error(`Remote must be ${repoName}`);
 }
-
-exec('git pull');
+if (!/master\s+pushes to master\s+\(up to date\)/.test(remote)) {
+  throw new Error('Local out of date. Please `git pull` first');
+}
