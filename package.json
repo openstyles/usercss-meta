@@ -56,6 +56,7 @@
       "no-mixed-operators": 0,
       "operator-linebreak": 0,
       "padded-blocks": 0,
+      "prefer-destructuring": 0,
       "quote-props": 0,
       "quotes": [
         2,
