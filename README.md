@@ -4,11 +4,13 @@
 
 ## Install
 
+[NPM](https://www.npmjs.com/package/usercss-meta)
+
 ```
 $ npm install --save usercss-meta
 ```
 
-Via CDN:
+unpkg.com CDN:
 
 * <https://unpkg.com/usercss-meta/dist/usercss-meta.js>
 * <https://unpkg.com/usercss-meta/dist/usercss-meta.min.js>
