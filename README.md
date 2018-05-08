@@ -214,6 +214,7 @@ MIT
 
 ## Changelog
 
-* 0.1.1 (May 7, 2018)
+* 0.4.0 (May 9, 2018)
 
-  - Initial release.
+  - Rewrite the parser, cleanup unused stuff.
+  - Add stringify feature.
