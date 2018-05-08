@@ -1,11 +1,11 @@
-# parse-usercss
+# usercss-meta
 > Parse usercss metadata supported by the Stylus userstyle manager
 
 
 ## Install
 
 ```
-$ npm install --save parse-usercss
+$ npm install --save usercss-meta
 ```
 
 Via CDN:
@@ -17,7 +17,7 @@ Via CDN:
 ## Usage
 
 ```js
-const usercssMeta = require('parse-usercss');
+const usercssMeta = require('usercss-meta');
 
 const data = usercssMeta.parse(`/* ==UserStyle==
 @name        test
@@ -209,3 +209,9 @@ createStringifier(options).stringify(metadata);
 ## License
 
 MIT
+
+## Changelog
+
+* 0.1.1 (May 7, 2018)
+
+  - Initial release.
