@@ -34,7 +34,7 @@
   ],
   "devDependencies": {
     "ava": "*",
-    "nyc": "^11.4.1",
+    "nyc": "^11.8.0",
     "rollup": "^0.58.2",
     "rollup-plugin-cjs-es": "^0.3.2",
     "rollup-plugin-shim": "^1.0.0",
