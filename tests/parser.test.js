@@ -21,8 +21,7 @@ test('Default template', t => {
     namespace: 'github.com/openstyles/stylus',
     version: '0.1.0',
     description: 'my userstyle',
-    author: 'Me',
-    vars: {}
+    author: 'Me'
   });
 });
 
