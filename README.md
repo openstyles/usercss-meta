@@ -214,6 +214,11 @@ MIT
 
 ## Changelog
 
+* 0.5.0 (May 16, 2018)
+
+  - **Change: the ParseResult object doesn't contain `vars` key if there is no variable in the input.**
+  - Fix: `var` key is accidentally assigned to ParseResult object.
+
 * 0.4.0 (May 9, 2018)
 
   - Rewrite the parser, cleanup unused stuff.
