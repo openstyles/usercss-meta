@@ -25,6 +25,26 @@ test('Default template', t => {
   });
 });
 
+test('Unquote', t => {
+  const meta = `/* ==UserStyle==
+@description "foo bar"
+==/UserStyle== */`;
+
+  t.deepEqual(looseParser.parse(meta), {
+    description: 'foo bar'
+  });
+});
+
+test('Unquote multiline', t => {
+  const meta = String.raw`/* ==UserStyle==
+@description "foo\nbar"
+==/UserStyle== */`;
+
+  t.deepEqual(looseParser.parse(meta), {
+    description: 'foo\nbar'
+  });
+});
+
 test('Missing metadata @name', t => {
   const meta = `
 /* ==UserStyle==
