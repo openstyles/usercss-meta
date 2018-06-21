@@ -39,6 +39,16 @@ test('Default template align keys', t => {
 ==/UserStyle== */`);
 });
 
+test('Multi-line description', t => {
+  const meta = {
+    description: 'my\nuserstyle'
+  };
+
+  t.is(stringify(meta), String.raw`/* ==UserStyle==
+@description "my\nuserstyle"
+==/UserStyle== */`);
+});
+
 test('var color', t => {
   const meta = {
     vars: {
