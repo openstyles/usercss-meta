@@ -45,6 +45,10 @@
   "xo": {
     "esnext": true,
     "space": true,
+    "envs": [
+      "node",
+      "browser"
+    ],
     "rules": {
       "capitalized-comments": 0,
       "comma-dangle": 0,
