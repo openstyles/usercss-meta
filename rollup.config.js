@@ -1,18 +1,8 @@
 import cjs from 'rollup-plugin-cjs-es';
 import uglify from 'rollup-plugin-uglify';
-import shim from 'rollup-plugin-shim';
+import resolve from 'rollup-plugin-node-resolve';
 
 const {UGLIFY} = process.env;
-const plugins = [
-  shim({
-    url: 'export const URL = self.URL;'
-  }),
-  cjs()
-];
-
-if (UGLIFY) {
-  plugins.push(uglify());
-}
 
 export default {
   input: 'index.js',
@@ -24,5 +14,11 @@ export default {
     legacy: true,
     sourcemap: true
   },
-  plugins
+  plugins: [
+    resolve({
+      browser: true
+    }),
+    cjs(),
+    UGLIFY && uglify()
+  ].filter(Boolean)
 };
