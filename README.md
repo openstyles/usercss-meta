@@ -15,6 +15,7 @@ unpkg.com CDN:
 * <https://unpkg.com/usercss-meta/dist/usercss-meta.js>
 * <https://unpkg.com/usercss-meta/dist/usercss-meta.min.js>
 
+This module depends on `URL` parser. In Node.js, the module requires `url` module. In the browser build, it uses global variable `URL`.
 
 ## Usage
 
