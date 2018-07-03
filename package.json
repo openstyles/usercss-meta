@@ -22,7 +22,8 @@
   "files": [
     "index.js",
     "lib",
-    "dist"
+    "dist",
+    "shim"
   ],
   "browser": {
     "url": "./shim/url.js"
