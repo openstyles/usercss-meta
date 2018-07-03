@@ -215,6 +215,11 @@ MIT
 
 ## Changelog
 
+* 0.6.0 (Jul 13, 2018)
+
+  - **Change: the `url` module is shimmed with `self.URL` by using `pkg.browser`.**
+  - Fix: stringify multi-line description.
+
 * 0.5.0 (May 16, 2018)
 
   - **Change: the ParseResult object doesn't contain `vars` key if there is no variable in the input.**
