@@ -215,6 +215,10 @@ MIT
 
 ## Changelog
 
+* 0.6.1 (Jul 22, 2018)
+
+  - Fix: `stringify` would throw if the value is number instead of string.
+
 * 0.6.0 (Jul 13, 2018)
 
   - **Change: the `url` module is shimmed with `self.URL` by using `pkg.browser`.**
