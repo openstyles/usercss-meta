@@ -49,6 +49,16 @@ test('Multi-line description', t => {
 ==/UserStyle== */`);
 });
 
+test('Stringify a number', t => {
+  const meta = {
+    author: 999
+  };
+
+  t.is(stringify(meta), String.raw`/* ==UserStyle==
+@author 999
+==/UserStyle== */`);
+});
+
 test('var color', t => {
   const meta = {
     vars: {
