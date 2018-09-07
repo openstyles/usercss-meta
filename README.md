@@ -22,7 +22,7 @@ This module depends on `URL` parser. In Node.js, the module requires `url` modul
 ```js
 const usercssMeta = require('usercss-meta');
 
-const data = usercssMeta.parse(`/* ==UserStyle==
+const {metadata} = usercssMeta.parse(`/* ==UserStyle==
 @name        test
 @namespace   github.com/openstyles/stylus
 @version     0.1.0
@@ -50,7 +50,7 @@ const data = usercssMeta.parse(`/* ==UserStyle==
 }
 */
 
-usercssMeta.stringify(data, {alignKeys: true});
+usercssMeta.stringify(metadata, {alignKeys: true});
 
 /* => `/* ==UserStyle==
 @name        test
@@ -80,7 +80,7 @@ This module exports following members:
 ### parse
 
 ```js
-const metadataObject = parse(metadata: String, options?: Object);
+const parseResult = parse(metadata: String, options?: Object);
 ```
 
 This is a shortcut of
@@ -92,74 +92,93 @@ createParser(options).parse(metadata);
 ### createParser
 
 ```js
-const parser = createParser(options?: Object);
+const parser = createParser({
+  unknownKey?: String,
+  mandatoryKeys?: Array<key: String>
+  parseKey?: Object,
+  parseVar?: Object,
+  allowErrors?: Boolean
+});
 ```
 
-`options` may contain following properties:
+`unknownKey` decides how to parse unknown keys. Possible values are:
 
-* `unknownKey`: String. Change the behavior when an unknown key is parsed. Possible values are:
+- `ignore`: The directive is ignored. Default.
+- `assign`: Assign the text value (characters before `\s*\n`) to result object.
+- `throw`: Throw a `ParseError`.
 
-  - `ignore`: The directive is ignored. Default.
-  - `assign`: Assign the text value (characters before `\s*\n`) to result object.
-  - `throw`: Throw a ParseError.
+`mandatoryKeys` marks multiple keys as mandatory. If some keys are missing then throw a `ParseError`. Default: `['name', 'namespace', 'version']`.
 
-* `mandatoryKeys`: Array&lt;string>. Mark multiple keys as mandatory. If the key is missing in the metadata, the parser would throw an error. Default: `['name', 'namespace', 'version']`
-* `parseKey`: Object. Extend the parser to parse additional keys. The object is a map of `key: parseFunction` pair. For example:
+`parseKey` is a `key`/`parseFunction` map. It allows users to extend the parser. Example:
 
-  ```js
-  const parser = createParser({
-    mandatoryKeys: [],
-    parseKey: {
-      myKey: state => {
-        const rx = /\d+/y;
-        rx.lastIndex = state.lastIndex;
-        const match = rx.exec(state.text);
-        if (!match) {
-          throw new ParseError('value must be numbers', state, state.lastIndex);
-        }
-        state.index = match.index;
-        state.lastIndex = rx.lastIndex;
-        state.value = match[0];
+```js
+const parser = createParser({
+  mandatoryKeys: [],
+  parseKey: {
+    myKey: state => {
+      const rx = /\d+/y;
+      rx.lastIndex = state.lastIndex;
+      const match = rx.exec(state.text);
+      if (!match) {
+        throw new ParseError({
+          message: 'value must be numbers',
+          index: state.lastIndex
+        });
       }
+      state.index = match.index;
+      state.lastIndex = rx.lastIndex;
+      state.value = match[0];
     }
-  });
-  const result = parser.parse(`/* ==UserStyle==
+  }
+});
+const {metadata} = parser.parse(`
+  /* ==UserStyle==
   @myKey 123456
-  ==/UserStyle==`);
-  assert(result.myKey === '123456');
-  ```
+  ==/UserStyle==
+`);
+assert.equal(metadata.myKey, '123456');
+```
 
-* `parseVar`: Object. Extend the parser to parse additional variable types. The object is a map of `varType: parseFunction` pair. For example:
+`parseVar` is a `varType`/`parseFunction` map. It extends the parser to parse additional variable types. For example:
 
-  ```js
-  const parser = createParser({
-    mandatoryKeys: [],
-    parseVar: {
-      myvar: state => {
-        const rx = /\d+/y;
-        rx.lastIndex = state.lastIndex;
-        const match = rx.exec(state.text);
-        if (!match) {
-          throw new ParseError('value must be numbers', state, state.lastIndex);
-        }
-        state.index = match.index;
-        state.lastIndex = rx.lastIndex;
-        state.value = match[0];
+```js
+const parser = createParser({
+  mandatoryKeys: [],
+  parseVar: {
+    myvar: state => {
+      const rx = /\d+/y;
+      rx.lastIndex = state.lastIndex;
+      const match = rx.exec(state.text);
+      if (!match) {
+        throw new ParseError('value must be numbers', state, state.lastIndex);
       }
+      state.index = match.index;
+      state.lastIndex = rx.lastIndex;
+      state.value = match[0];
     }
-  });
-  const result = parser.parse(`/* ==UserStyle==
-  @var myvar var-name 'Customized variable' 123456
-  ==/UserStyle== */`);
-  const va = result.vars['var-name'];
-  assert(va.type === 'myvar');
-  assert(va.label === 'Customized variable');
-  assert(va.default === '123456');
-  ```
+  }
+});
+const {metadata} = parser.parse(`/* ==UserStyle==
+@var myvar var-name 'Customized variable' 123456
+==/UserStyle== */`);
+const va = metadata.vars['var-name'];
+assert.equal(va.type, 'myvar');
+assert.equal(va.label, 'Customized variable');
+assert.equal(va.default, '123456');
+```
 
-The parser object has following members:
+If `allowErrors` is `true`, the parser will collect parsing errors while `parser.parse()` and return them as `parseResult.errors`. Otherwise, the first parsing error will be thrown.
 
-* `parse(text: string): ParseResult object`: Function. Parse the string into a result object.
+### parser.parse
+
+```js
+const {
+  metadata: Object,
+  errors: Array
+} = parser.parse(text: String);
+```
+
+Parse the text (metadata header) and return the result.
 
 ### ParseError
 
