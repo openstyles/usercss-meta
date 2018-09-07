@@ -53,7 +53,7 @@ test('Missing metadata @name', t => {
 ==/UserStyle== */`.trim();
 
   const error = t.throws(() => parser.parse(meta));
-  t.is(error.message, 'Missing metadata @name');
+  t.is(error.message, 'Missing metadata: @name');
 });
 
 test('Missing metadata @namespace', t => {
@@ -64,7 +64,7 @@ test('Missing metadata @namespace', t => {
 ==/UserStyle== */`.trim();
 
   const error = t.throws(() => parser.parse(meta));
-  t.is(error.message, 'Missing metadata @namespace');
+  t.is(error.message, 'Missing metadata: @namespace');
 });
 
 test('Missing metadata @version', t => {
@@ -75,7 +75,7 @@ test('Missing metadata @version', t => {
 ==/UserStyle== */`.trim();
 
   const error = t.throws(() => parser.parse(meta));
-  t.is(error.message, 'Missing metadata @version');
+  t.is(error.message, 'Missing metadata: @version');
 });
 
 test('Invalid version', t => {
@@ -85,7 +85,7 @@ test('Invalid version', t => {
 ==/UserStyle== */`.trim();
 
   const error = t.throws(() => looseParser.parse(meta));
-  t.is(error.message, '0.1.x is not a valid version');
+  t.is(error.message, 'Invalid version: 0.1.x');
 });
 
 test('Normalize version', t => {
@@ -328,7 +328,7 @@ test('basic @advanced image error', t => {
 
   const error = t.throws(() => looseParser.parse(meta));
   t.is(error.index, 62);
-  t.is(error.message, 'no open {');
+  t.is(error.message, "Missing character: '{'");
 });
 
 test('basic @advanced image error empty', t => {
@@ -378,7 +378,7 @@ test('unknown var type', t => {
 ==/UserStyle== */`.trim();
   const error = t.throws(() => looseParser.parse(meta));
   t.is(error.index, 22);
-  t.is(error.message, 'unknown type: unknown');
+  t.is(error.message, 'Unknown @var type: unknown');
 });
 
 test('invalid characters', t => {
@@ -417,7 +417,7 @@ test('unknownKey throw', t => {
     parse(meta, {unknownKey: 'throw', mandatoryKeys: []});
   });
   t.is(error.index, 17);
-  t.is(error.message, 'Unknown metadata @myKey');
+  t.is(error.message, 'Unknown metadata: @myKey');
 });
 
 test('unknownKey invalid', t => {
@@ -449,7 +449,7 @@ test('basic URLs error', t => {
 ==/UserStyle== */`.trim();
 
   const error = t.throws(() => looseParser.parse(meta));
-  t.is(error.message, 'file: is not a valid protocol');
+  t.is(error.message, 'Invalid protocol: file:');
   t.is(error.index, 30);
 });
 
@@ -498,7 +498,7 @@ test('parseWord error', t => {
     lastIndex: 10
   }));
   t.is(error.index, 10);
-  t.is(error.message, 'invalid word');
+  t.is(error.message, 'Invalid word');
 });
 
 test('parseJSON error', t => {
@@ -507,7 +507,7 @@ test('parseJSON error', t => {
     lastIndex: 10
   }));
   t.is(error.index, 11);
-  t.is(error.message, "Invalid JSON: unknown literal 'abc'");
+  t.is(error.message, "Invalid JSON: Unknown literal 'abc'");
 });
 
 test('parseJSON object error', t => {
@@ -516,7 +516,7 @@ test('parseJSON object error', t => {
     lastIndex: 0
   }));
   t.is(error.index, 4);
-  t.is(error.message, "Invalid JSON: missing ':'");
+  t.is(error.message, "Invalid JSON: Missing character: ':'");
 });
 
 test('parseJSON object error 2', t => {
@@ -525,7 +525,7 @@ test('parseJSON object error 2', t => {
     lastIndex: 0
   }));
   t.is(error.index, 10);
-  t.is(error.message, "Invalid JSON: missing ',' or '}'");
+  t.is(error.message, "Invalid JSON: Missing character: ',', '}'");
 });
 
 test('parseJSON array error', t => {
@@ -534,7 +534,7 @@ test('parseJSON array error', t => {
     lastIndex: 0
   }));
   t.is(error.index, 5);
-  t.is(error.message, "Invalid JSON: missing ',' or ']'");
+  t.is(error.message, "Invalid JSON: Missing character: ',', ']'");
 });
 
 test('parseJSON multiline string', t => {
@@ -576,7 +576,7 @@ test('parseEOT error', t => {
     lastIndex: 10
   }));
   t.is(error.index, 10);
-  t.is(error.message, 'missing EOT');
+  t.is(error.message, 'Missing EOT');
 });
 
 test('parseString backtick', t => {
@@ -605,7 +605,7 @@ test('parseString error', t => {
   };
   const error = t.throws(() => util.parseString(state));
   t.is(error.index, 10);
-  t.is(error.message, 'Quoted string expected');
+  t.is(error.message, 'Invalid string');
 });
 
 test('parseNumber error', t => {
@@ -615,7 +615,7 @@ test('parseNumber error', t => {
   };
   const error = t.throws(() => util.parseNumber(state));
   t.is(error.index, 0);
-  t.is(error.message, 'invalid number');
+  t.is(error.message, 'Invalid number');
 });
 
 test('allowErrors', t => {
@@ -630,6 +630,6 @@ test('allowErrors', t => {
     ==/UserStyle== */
   `);
   t.is(result.errors[0].code, 'invalidVersion');
-  t.is(result.errors[0].code, 'invalidUrl');
-  t.is(result.errors[0].code, 'missingMandatory');
+  t.is(result.errors[1].code, 'invalidURLProtocol');
+  t.is(result.errors[2].code, 'missingMandatory');
 });
