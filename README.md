@@ -80,13 +80,13 @@ This module exports following members:
 ### parse
 
 ```js
-const parseResult = parse(metadata: String, options?: Object);
+const parseResult = parse(text: String, options?: Object);
 ```
 
 This is a shortcut of
 
 ```js
-createParser(options).parse(metadata);
+createParser(options).parse(text);
 ```
 
 ### createParser
@@ -231,13 +231,13 @@ A collection of parser utilities. Some of them might be useful when extending th
 ### stringify
 
 ```js
-const metadata = stringify(metadataObject: Object, options?: Object);
+const text = stringify(metadata: Object, options?: Object);
 ```
 
 This is a shortcut of:
 
 ```js
-createStringifier(options).stringify(metadataObject);
+createStringifier(options).stringify(metadata);
 ```
 
 ### createStringifier
