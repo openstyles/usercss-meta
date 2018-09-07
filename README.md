@@ -77,8 +77,11 @@ This module exports following members:
   * `stringify`: Function. Stringify metadata object and return the string.
   * `createStringifier`: Function. Create a metadata stringifier.
 
+### parse
 
-### parse(metadata: string, options?: object): object
+```js
+const metadataObject = parse(metadata: String, options?: Object);
+```
 
 This is a shortcut of
 
@@ -86,7 +89,11 @@ This is a shortcut of
 createParser(options).parse(metadata);
 ```
 
-### createParser(options?: object): Parser object
+### createParser
+
+```js
+const parser = createParser(options?: Object);
+```
 
 `options` may contain following properties:
 
@@ -150,11 +157,15 @@ createParser(options).parse(metadata);
   assert(va.default === '123456');
   ```
 
-This function returns a parser object which contains following members:
+The parser object has following members:
 
 * `parse(text: string): ParseResult object`: Function. Parse the string into a result object.
 
-### new ParseError(message, state: object, index: number)
+### ParseError
+
+```js
+throw new ParseError(message: String, state: Object, index: Number);
+```
 
 Use this class to initiate a parse error. When catching the error, `state` and `index` can be accessed from `error.state` and `error.index`.
 
@@ -170,15 +181,23 @@ A collection of parser utilities. Some of them might be useful when extending th
 * `parseStringToEnd(state)`: Parse the text value before line feed.
 * `parseWord(state)`: Parse a word. (`[\w-]+`)
 
-### stringify(metadata: object, options?: object): string
+### stringify
+
+```js
+const metadata = stringify(metadataObject: Object, options?: Object);
+```
 
 This is a shortcut of:
 
 ```js
-createStringifier(options).stringify(metadata);
+createStringifier(options).stringify(metadataObject);
 ```
 
-### createStringifier(options?: object): Stringifier object
+### createStringifier
+
+```js
+const stringifier = createStringifier(options?: Object);
+```
 
 `options` may contain following properties:
 
