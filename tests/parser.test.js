@@ -617,3 +617,19 @@ test('parseNumber error', t => {
   t.is(error.index, 0);
   t.is(error.message, 'invalid number');
 });
+
+test('allowErrors', t => {
+  const parser = createParser({
+    allowErrors: true
+  });
+  const result = parser.parse(`
+    /* ==UserStyle==
+    @name foo
+    @version 0.1.01
+    @supportURL ftp://example.com
+    ==/UserStyle== */
+  `);
+  t.is(result.errors[0].code, 'invalidVersion');
+  t.is(result.errors[0].code, 'invalidUrl');
+  t.is(result.errors[0].code, 'missingMandatory');
+});
