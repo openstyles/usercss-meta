@@ -6,17 +6,31 @@ import {createParser, util, parse} from '..';
 const parser = createParser();
 const looseParser = createParser({mandatoryKeys: []});
 
+function extractRange(text) {
+  const index = text.indexOf('|');
+  return {
+    text: text.slice(0, index) + text.slice(index + 1),
+    index,
+    raw: text
+  };
+}
+
+function drawRange(text, index) {
+  return text.slice(0, index) + '|' + text.slice(index);
+}
+
 test('Default template', t => {
   const meta = `
-/* ==UserStyle==
-@name        test
-@namespace   github.com/openstyles/stylus
-@version     0.1.0
-@description my userstyle
-@author      Me
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @name        test
+    @namespace   github.com/openstyles/stylus
+    @version     0.1.0
+    @description my userstyle
+    @author      Me
+    ==/UserStyle== */
+  `;
 
-  t.deepEqual(parser.parse(meta), {
+  t.deepEqual(parser.parse(meta).metadata, {
     name: 'test',
     namespace: 'github.com/openstyles/stylus',
     version: '0.1.0',
@@ -26,31 +40,36 @@ test('Default template', t => {
 });
 
 test('Unquote', t => {
-  const meta = `/* ==UserStyle==
-@description "foo bar"
-==/UserStyle== */`;
+  const meta = `
+    /* ==UserStyle==
+    @description "foo bar"
+    ==/UserStyle== */
+  `;
 
-  t.deepEqual(looseParser.parse(meta), {
+  t.deepEqual(looseParser.parse(meta).metadata, {
     description: 'foo bar'
   });
 });
 
 test('Unquote multiline', t => {
-  const meta = String.raw`/* ==UserStyle==
-@description "foo\nbar"
-==/UserStyle== */`;
+  const meta = String.raw`
+    /* ==UserStyle==
+    @description "foo\nbar"
+    ==/UserStyle== */
+  `;
 
-  t.deepEqual(looseParser.parse(meta), {
+  t.deepEqual(looseParser.parse(meta).metadata, {
     description: 'foo\nbar'
   });
 });
 
 test('Missing metadata @name', t => {
   const meta = `
-/* ==UserStyle==
-@namespace   github.com/openstyles/stylus
-@version     0.1.0
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @namespace   github.com/openstyles/stylus
+    @version     0.1.0
+    ==/UserStyle== */
+  `;
 
   const error = t.throws(() => parser.parse(meta));
   t.is(error.message, 'Missing metadata: @name');
@@ -58,10 +77,11 @@ test('Missing metadata @name', t => {
 
 test('Missing metadata @namespace', t => {
   const meta = `
-/* ==UserStyle==
-@name        test
-@version     0.1.0
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @name        test
+    @version     0.1.0
+    ==/UserStyle== */
+  `;
 
   const error = t.throws(() => parser.parse(meta));
   t.is(error.message, 'Missing metadata: @namespace');
@@ -69,10 +89,11 @@ test('Missing metadata @namespace', t => {
 
 test('Missing metadata @version', t => {
   const meta = `
-/* ==UserStyle==
-@name        test
-@namespace   github.com/openstyles/stylus
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @name        test
+    @namespace   github.com/openstyles/stylus
+    ==/UserStyle== */
+  `;
 
   const error = t.throws(() => parser.parse(meta));
   t.is(error.message, 'Missing metadata: @version');
@@ -80,9 +101,10 @@ test('Missing metadata @version', t => {
 
 test('Invalid version', t => {
   const meta = `
-/* ==UserStyle==
-@version 0.1.x
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @version 0.1.x
+    ==/UserStyle== */
+  `;
 
   const error = t.throws(() => looseParser.parse(meta));
   t.is(error.message, 'Invalid version: 0.1.x');
@@ -90,20 +112,22 @@ test('Invalid version', t => {
 
 test('Normalize version', t => {
   const meta = `
-/* ==UserStyle==
-@version v0.1.0
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @version v0.1.0
+    ==/UserStyle== */
+  `;
 
-  t.is(looseParser.parse(meta).version, '0.1.0');
+  t.is(looseParser.parse(meta).metadata.version, '0.1.0');
 });
 
 test('basic @var color', t => {
   const meta = `
-/* ==UserStyle==
-@var color font-color 'Font-color' #123456
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @var color font-color 'Font-color' #123456
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['font-color'];
+  const va = looseParser.parse(meta).metadata.vars['font-color'];
   t.is(va.type, 'color');
   t.is(va.label, 'Font-color');
   t.is(va.default, '#123456');
@@ -111,16 +135,17 @@ test('basic @var color', t => {
 
 test('basic @var select', t => {
   const meta = `
-/* ==UserStyle==
-@var select nav-pos "Navbar pos" {
-  "Top": "top",
-  "Bottom": "bottom",
-  "Right": "right",
-  "Left": "left"
-}
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @var select nav-pos "Navbar pos" {
+      "Top": "top",
+      "Bottom": "bottom",
+      "Right": "right",
+      "Left": "left"
+    }
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['nav-pos'];
+  const va = looseParser.parse(meta).metadata.vars['nav-pos'];
   t.is(va.type, 'select');
   t.is(va.label, 'Navbar pos');
   t.is(va.default, 'Top');
@@ -149,26 +174,28 @@ test('basic @var select', t => {
 });
 
 test('basic @var select error', t => {
-  const meta = `
-/* ==UserStyle==
-@var select nav-pos "Navbar pos" {}
-==/UserStyle== */`.trim();
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var select nav-pos "Navbar pos" |{}
+    ==/UserStyle== */
+  `);
 
-  const error = t.throws(() => looseParser.parse(meta));
+  const error = t.throws(() => looseParser.parse(text));
   t.is(error.message, 'Option list is empty');
-  t.is(error.index, 50);
+  t.is(drawRange(text, error.index), raw);
 });
 
 test('basic @var select with built-in label', t => {
   const meta = `
-/* ==UserStyle==
-@var select nav-pos Navbar {
-  'near_black:Near Black': '#111111',
-  'near_white:Near White': '#eeeeee'
-}
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @var select nav-pos Navbar {
+      'near_black:Near Black': '#111111',
+      'near_white:Near White': '#eeeeee'
+    }
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['nav-pos'];
+  const va = looseParser.parse(meta).metadata.vars['nav-pos'];
   t.is(va.type, 'select');
   t.is(va.label, 'Navbar');
   t.is(va.default, 'near_black');
@@ -188,11 +215,12 @@ test('basic @var select with built-in label', t => {
 
 test('basic @var select set as an array', t => {
   const meta = `
-/* ==UserStyle==
-@var select theme "Theme" ['dark', 'light']
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @var select theme "Theme" ['dark', 'light']
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['theme'];
+  const va = looseParser.parse(meta).metadata.vars['theme'];
   t.is(va.type, 'select');
   t.is(va.label, 'Theme');
   t.is(va.default, 'dark');
@@ -212,11 +240,12 @@ test('basic @var select set as an array', t => {
 
 test('basic @var select set as an array with built-in label', t => {
   const meta = `
-/* ==UserStyle==
-@var select theme "Theme" ['dark:Dark theme', 'light:Light theme']
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @var select theme "Theme" ['dark:Dark theme', 'light:Light theme']
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['theme'];
+  const va = looseParser.parse(meta).metadata.vars['theme'];
   t.is(va.type, 'select');
   t.is(va.label, 'Theme');
   t.is(va.default, 'dark');
@@ -236,34 +265,37 @@ test('basic @var select set as an array with built-in label', t => {
 
 test('basic @var checkbox', t => {
   const meta = `
-/* ==UserStyle==
-@var checkbox affix "Set affixed" 1
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @var checkbox affix "Set affixed" 1
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['affix'];
+  const va = looseParser.parse(meta).metadata.vars['affix'];
   t.is(va.type, 'checkbox');
   t.is(va.label, 'Set affixed');
   t.is(va.default, '1');
 });
 
 test('basic @var checkbox error', t => {
-  const meta = `
-/* ==UserStyle==
-@var checkbox affix "Set affixed" 2
-==/UserStyle== */`.trim();
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var checkbox affix "Set affixed" |2
+    ==/UserStyle== */
+  `);
 
-  const error = t.throws(() => looseParser.parse(meta));
+  const error = t.throws(() => looseParser.parse(text));
   t.is(error.message, 'value must be 0 or 1');
-  t.is(error.index, 51);
+  t.is(drawRange(text, error.index), raw);
 });
 
 test('basic @var text', t => {
   const meta = `
-/* ==UserStyle==
-@var text height "Set height" 10px
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @var text height "Set height" 10px
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['height'];
+  const va = looseParser.parse(meta).metadata.vars['height'];
   t.is(va.type, 'text');
   t.is(va.label, 'Set height');
   t.is(va.default, '10px');
@@ -271,11 +303,12 @@ test('basic @var text', t => {
 
 test('basic @advanced text', t => {
   const meta = `
-/* ==UserStyle==
-@advanced text height "Set height" "10px"
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @advanced text height "Set height" "10px"
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['height'];
+  const va = looseParser.parse(meta).metadata.vars['height'];
   t.is(va.type, 'text');
   t.is(va.label, 'Set height');
   t.is(va.default, '10px');
@@ -283,11 +316,12 @@ test('basic @advanced text', t => {
 
 test('basic @advanced color', t => {
   const meta = `
-/* ==UserStyle==
-@advanced color font-color "Font color" #ffffff
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @advanced color font-color "Font color" #ffffff
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['font-color'];
+  const va = looseParser.parse(meta).metadata.vars['font-color'];
   t.is(va.type, 'color');
   t.is(va.label, 'Font color');
   t.is(va.default, '#ffffff');
@@ -295,14 +329,15 @@ test('basic @advanced color', t => {
 
 test('basic @advanced image', t => {
   const meta = `
-/* ==UserStyle==
-@advanced image background "Page background" {
-  bg_1 "Background 1" "http://example.com/example.jpg"
-  bg_2 "Background 2" "http://example.com/photo.php?id=_A_IMAGE_ID_"
-}
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @advanced image background "Page background" {
+      bg_1 "Background 1" "http://example.com/example.jpg"
+      bg_2 "Background 2" "http://example.com/photo.php?id=_A_IMAGE_ID_"
+    }
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['background'];
+  const va = looseParser.parse(meta).metadata.vars['background'];
   t.is(va.type, 'image');
   t.is(va.label, 'Page background');
   t.is(va.default, 'bg_1');
@@ -321,39 +356,42 @@ test('basic @advanced image', t => {
 });
 
 test('basic @advanced image error', t => {
-  const meta = `
-/* ==UserStyle==
-@advanced image background "Page background" []
-==/UserStyle== */`.trim();
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @advanced image background "Page background" |[]
+    ==/UserStyle== */
+  `);
 
-  const error = t.throws(() => looseParser.parse(meta));
-  t.is(error.index, 62);
+  const error = t.throws(() => looseParser.parse(text));
   t.is(error.message, "Missing character: '{'");
+  t.is(drawRange(text, error.index), raw);
 });
 
 test('basic @advanced image error empty', t => {
-  const meta = `
-/* ==UserStyle==
-@advanced image background "Page background" {}
-==/UserStyle== */`.trim();
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @advanced image background "Page background" |{}
+    ==/UserStyle== */
+  `);
 
-  const error = t.throws(() => looseParser.parse(meta));
-  t.is(error.index, 62);
+  const error = t.throws(() => looseParser.parse(text));
   t.is(error.message, 'Option list is empty');
+  t.is(drawRange(text, error.index), raw);
 });
 
 test('basic @advanced dropdown', t => {
   const meta = `
-/* ==UserStyle==
-@advanced dropdown browser "Your browser" {
-  fx "Firefox" <<<EOT
-background-color: red; EOT;
-  cr "Chrome" <<<EOT
-background-color: green; EOT;
-}
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @advanced dropdown browser "Your browser" {
+      fx "Firefox" <<<EOT
+    background-color: red; EOT;
+      cr "Chrome" <<<EOT
+    background-color: green; EOT;
+    }
+    ==/UserStyle== */
+  `;
 
-  const va = looseParser.parse(meta).vars['browser'];
+  const va = looseParser.parse(meta).metadata.vars['browser'];
   t.is(va.type, 'dropdown');
   t.is(va.label, 'Your browser');
   t.is(va.default, 'fx');
@@ -372,13 +410,14 @@ background-color: green; EOT;
 });
 
 test('unknown var type', t => {
-  const meta = `
-/* ==UserStyle==
-@var unknown my-var "My variable" 123456
-==/UserStyle== */`.trim();
-  const error = t.throws(() => looseParser.parse(meta));
-  t.is(error.index, 22);
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var |unknown my-var "My variable" 123456
+    ==/UserStyle== */
+  `);
+  const error = t.throws(() => looseParser.parse(text));
   t.is(error.message, 'Unknown @var type: unknown');
+  t.is(drawRange(text, error.index), raw);
 });
 
 test('invalid characters', t => {
@@ -389,42 +428,46 @@ test('invalid characters', t => {
 
 test('unknownKey ignore', t => {
   const meta = `
-/* ==UserStyle==
-@myKey 123456
-==/UserStyle== */`;
+    /* ==UserStyle==
+    @myKey 123456
+    ==/UserStyle== */
+  `;
 
-  const result = parse(meta, {unknownKey: 'ignore', mandatoryKeys: []});
-  t.is(result.myKey, undefined);
+  const {metadata} = parse(meta, {unknownKey: 'ignore', mandatoryKeys: []});
+  t.is(metadata.myKey, undefined);
 });
 
 test('unknownKey assign', t => {
   const meta = `
-/* ==UserStyle==
-@myKey 123 456
-==/UserStyle== */`;
+    /* ==UserStyle==
+    @myKey 123 456
+    ==/UserStyle== */
+  `;
 
-  const result = parse(meta, {unknownKey: 'assign', mandatoryKeys: []});
-  t.is(result.myKey, '123 456');
+  const {metadata} = parse(meta, {unknownKey: 'assign', mandatoryKeys: []});
+  t.is(metadata.myKey, '123 456');
 });
 
 test('unknownKey throw', t => {
-  const meta = `
-/* ==UserStyle==
-@myKey 123 456
-==/UserStyle== */`.trim();
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    |@myKey 123 456
+    ==/UserStyle== */
+  `);
 
   const error = t.throws(() => {
-    parse(meta, {unknownKey: 'throw', mandatoryKeys: []});
+    parse(text, {unknownKey: 'throw', mandatoryKeys: []});
   });
-  t.is(error.index, 17);
   t.is(error.message, 'Unknown metadata: @myKey');
+  t.is(drawRange(text, error.index), raw);
 });
 
 test('unknownKey invalid', t => {
   const meta = `
-/* ==UserStyle==
-@myKey 123 456
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @myKey 123 456
+    ==/UserStyle== */
+  `;
 
   const error = t.throws(() => {
     parse(meta, {unknownKey: 'invalid', mandatoryKeys: []});
@@ -434,23 +477,25 @@ test('unknownKey invalid', t => {
 
 test('basic URLs', t => {
   const meta = `
-/* ==UserStyle==
-@homepageURL https://github.com/StylishThemes/parse-usercss
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @homepageURL https://github.com/StylishThemes/parse-usercss
+    ==/UserStyle== */
+  `;
 
-  const result = looseParser.parse(meta);
-  t.is(result.homepageURL, 'https://github.com/StylishThemes/parse-usercss');
+  const {metadata} = looseParser.parse(meta);
+  t.is(metadata.homepageURL, 'https://github.com/StylishThemes/parse-usercss');
 });
 
 test('basic URLs error', t => {
-  const meta = `
-/* ==UserStyle==
-@homepageURL file:///C:/windows
-==/UserStyle== */`.trim();
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @homepageURL |file:///C:/windows
+    ==/UserStyle== */
+  `);
 
-  const error = t.throws(() => looseParser.parse(meta));
+  const error = t.throws(() => looseParser.parse(text));
   t.is(error.message, 'Invalid protocol: file:');
-  t.is(error.index, 30);
+  t.is(drawRange(text, error.index), raw);
 });
 
 test('user parse key', t => {
@@ -464,11 +509,12 @@ test('user parse key', t => {
     }
   });
   const meta = `
-/* ==UserStyle==
-@myKey Hello
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @myKey Hello
+    ==/UserStyle== */
+  `;
 
-  t.is(parser.parse(meta).myKey, 'Hello OK');
+  t.is(parser.parse(meta).metadata.myKey, 'Hello OK');
 });
 
 test('user parse var', t => {
@@ -482,11 +528,12 @@ test('user parse var', t => {
     }
   });
   const meta = `
-/* ==UserStyle==
-@var color my-color "My color" #fff
-==/UserStyle== */`.trim();
+    /* ==UserStyle==
+    @var color my-color "My color" #fff
+    ==/UserStyle== */
+  `;
 
-  const va = parser.parse(meta).vars['my-color'];
+  const va = parser.parse(meta).metadata.vars['my-color'];
   t.is(va.type, 'color');
   t.is(va.label, 'My color');
   t.is(va.default, '#fff OK');

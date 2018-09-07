@@ -1,17 +1,20 @@
 import test from 'ava';
+import endent from 'endent';
 import * as usercssMeta from '..';
 
 test('Readme example', t => {
-  const data = usercssMeta.parse(`/* ==UserStyle==
-@name        test
-@namespace   github.com/openstyles/stylus
-@version     0.1.0
-@description my userstyle
-@author      Me
-@var text my-color "Select a color" #123456
-==/UserStyle== */`);
+  const {metadata} = usercssMeta.parse(`
+    /* ==UserStyle==
+    @name        test
+    @namespace   github.com/openstyles/stylus
+    @version     0.1.0
+    @description my userstyle
+    @author      Me
+    @var text my-color "Select a color" #123456
+    ==/UserStyle== */
+  `);
 
-  t.deepEqual(data, {
+  t.deepEqual(metadata, {
     name: 'test',
     namespace: 'github.com/openstyles/stylus',
     version: '0.1.0',
@@ -29,15 +32,14 @@ test('Readme example', t => {
     }
   });
 
-  t.deepEqual(
-    usercssMeta.stringify(data, {alignKeys: true}),
-    `/* ==UserStyle==
-@name        test
-@namespace   github.com/openstyles/stylus
-@version     0.1.0
-@description my userstyle
-@author      Me
-@var         text my-color "Select a color" #123456
-==/UserStyle== */`
-  );
+  t.deepEqual(usercssMeta.stringify(metadata, {alignKeys: true}), endent`
+    /* ==UserStyle==
+    @name        test
+    @namespace   github.com/openstyles/stylus
+    @version     0.1.0
+    @description my userstyle
+    @author      Me
+    @var         text my-color "Select a color" #123456
+    ==/UserStyle== */
+  `);
 });

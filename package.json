@@ -38,6 +38,7 @@
   ],
   "devDependencies": {
     "ava": "*",
+    "endent": "^1.2.0",
     "nyc": "^11.8.0",
     "rollup": "^0.58.2",
     "rollup-plugin-cjs-es": "^0.3.2",
