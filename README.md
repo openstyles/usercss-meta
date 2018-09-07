@@ -150,7 +150,10 @@ const parser = createParser({
       rx.lastIndex = state.lastIndex;
       const match = rx.exec(state.text);
       if (!match) {
-        throw new ParseError('value must be numbers', state, state.lastIndex);
+        throw new ParseError({
+          message: 'value must be numbers',
+          index: state.lastIndex
+        });
       }
       state.index = match.index;
       state.lastIndex = rx.lastIndex;
@@ -183,10 +186,35 @@ Parse the text (metadata header) and return the result.
 ### ParseError
 
 ```js
-throw new ParseError(message: String, state: Object, index: Number);
+throw new ParseError(properties: Object);
 ```
 
-Use this class to initiate a parse error. When catching the error, `state` and `index` can be accessed from `error.state` and `error.index`.
+Use this class to initiate a parse error.
+
+`properties` would be assigned to the error object. There are some special properties:
+
+* `code` - error code.
+* `message` - error message.
+* `index` - the string index where the error occurs.
+* `args` - an array of values that is used to compose the error message. This allows other clients to generate i18n error message.
+
+A table of errors thrown by the parser:
+
+|`err.code`|`err.args`|Description|
+|----------|----------|-----------|
+|`invalidCheckboxDefault`||Expect 0 or 1.|
+|`invalidNumber`||Expect a number|
+|`invalidSelectEmptyOptions`||The options list of `@var select` is empty.|
+|`invalidString`||Expect a string that is quoted with `'`, `"`, or `` ` ``.|
+|`invalidURLProtocol`|Protocol of the URL|Only http and https are allowed.|
+|`invalidVersion`|Version string|https://github.com/sindresorhus/semver-regex|
+|`invalidWord`||Expect a word.|
+|`missingChar`|A list of valid characters|Expect a specific character.|
+|`missingEOT`||Expect `<<EOT ...` data.|
+|`missingMandatory`|A list of missing keys|This error doesn't have `err.index`.|
+|`unknownJSONLiteral`|Literal value|JSON has only 3 literals: `true`, `false`, and `null`.|
+|`unknownMeta`|Key of unknown metadata|Unknown `@metadata`.|
+|`unknownVarType`|Variable type|Unknown `@var` type.|
 
 ### util
 
