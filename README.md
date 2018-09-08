@@ -22,7 +22,7 @@ This module depends on `URL` parser. In Node.js, the module requires `url` modul
 ```js
 const usercssMeta = require('usercss-meta');
 
-const data = usercssMeta.parse(`/* ==UserStyle==
+const {metadata} = usercssMeta.parse(`/* ==UserStyle==
 @name        test
 @namespace   github.com/openstyles/stylus
 @version     0.1.0
@@ -50,7 +50,7 @@ const data = usercssMeta.parse(`/* ==UserStyle==
 }
 */
 
-usercssMeta.stringify(data, {alignKeys: true});
+usercssMeta.stringify(metadata, {alignKeys: true});
 
 /* => `/* ==UserStyle==
 @name        test
@@ -77,86 +77,144 @@ This module exports following members:
   * `stringify`: Function. Stringify metadata object and return the string.
   * `createStringifier`: Function. Create a metadata stringifier.
 
+### parse
 
-### parse(metadata: string, options?: object): object
+```js
+const parseResult = parse(text: String, options?: Object);
+```
 
 This is a shortcut of
 
 ```js
-createParser(options).parse(metadata);
+createParser(options).parse(text);
 ```
 
-### createParser(options?: object): Parser object
+### createParser
 
-`options` may contain following properties:
+```js
+const parser = createParser({
+  unknownKey?: String,
+  mandatoryKeys?: Array<key: String>
+  parseKey?: Object,
+  parseVar?: Object,
+  allowErrors?: Boolean
+});
+```
 
-* `unknownKey`: String. Change the behavior when an unknown key is parsed. Possible values are:
+`unknownKey` decides how to parse unknown keys. Possible values are:
 
-  - `ignore`: The directive is ignored. Default.
-  - `assign`: Assign the text value (characters before `\s*\n`) to result object.
-  - `throw`: Throw a ParseError.
+- `ignore`: The directive is ignored. Default.
+- `assign`: Assign the text value (characters before `\s*\n`) to result object.
+- `throw`: Throw a `ParseError`.
 
-* `mandatoryKeys`: Array&lt;string>. Mark multiple keys as mandatory. If the key is missing in the metadata, the parser would throw an error. Default: `['name', 'namespace', 'version']`
-* `parseKey`: Object. Extend the parser to parse additional keys. The object is a map of `key: parseFunction` pair. For example:
+`mandatoryKeys` marks multiple keys as mandatory. If some keys are missing then throw a `ParseError`. Default: `['name', 'namespace', 'version']`.
 
-  ```js
-  const parser = createParser({
-    mandatoryKeys: [],
-    parseKey: {
-      myKey: state => {
-        const rx = /\d+/y;
-        rx.lastIndex = state.lastIndex;
-        const match = rx.exec(state.text);
-        if (!match) {
-          throw new ParseError('value must be numbers', state, state.lastIndex);
-        }
-        state.index = match.index;
-        state.lastIndex = rx.lastIndex;
-        state.value = match[0];
+`parseKey` is a `key`/`parseFunction` map. It allows users to extend the parser. Example:
+
+```js
+const parser = createParser({
+  mandatoryKeys: [],
+  parseKey: {
+    myKey: state => {
+      const rx = /\d+/y;
+      rx.lastIndex = state.lastIndex;
+      const match = rx.exec(state.text);
+      if (!match) {
+        throw new ParseError({
+          message: 'value must be numbers',
+          index: state.lastIndex
+        });
       }
+      state.index = match.index;
+      state.lastIndex = rx.lastIndex;
+      state.value = match[0];
     }
-  });
-  const result = parser.parse(`/* ==UserStyle==
+  }
+});
+const {metadata} = parser.parse(`
+  /* ==UserStyle==
   @myKey 123456
-  ==/UserStyle==`);
-  assert(result.myKey === '123456');
-  ```
+  ==/UserStyle==
+`);
+assert.equal(metadata.myKey, '123456');
+```
 
-* `parseVar`: Object. Extend the parser to parse additional variable types. The object is a map of `varType: parseFunction` pair. For example:
+`parseVar` is a `varType`/`parseFunction` map. It extends the parser to parse additional variable types. For example:
 
-  ```js
-  const parser = createParser({
-    mandatoryKeys: [],
-    parseVar: {
-      myvar: state => {
-        const rx = /\d+/y;
-        rx.lastIndex = state.lastIndex;
-        const match = rx.exec(state.text);
-        if (!match) {
-          throw new ParseError('value must be numbers', state, state.lastIndex);
-        }
-        state.index = match.index;
-        state.lastIndex = rx.lastIndex;
-        state.value = match[0];
+```js
+const parser = createParser({
+  mandatoryKeys: [],
+  parseVar: {
+    myvar: state => {
+      const rx = /\d+/y;
+      rx.lastIndex = state.lastIndex;
+      const match = rx.exec(state.text);
+      if (!match) {
+        throw new ParseError({
+          message: 'value must be numbers',
+          index: state.lastIndex
+        });
       }
+      state.index = match.index;
+      state.lastIndex = rx.lastIndex;
+      state.value = match[0];
     }
-  });
-  const result = parser.parse(`/* ==UserStyle==
-  @var myvar var-name 'Customized variable' 123456
-  ==/UserStyle== */`);
-  const va = result.vars['var-name'];
-  assert(va.type === 'myvar');
-  assert(va.label === 'Customized variable');
-  assert(va.default === '123456');
-  ```
+  }
+});
+const {metadata} = parser.parse(`/* ==UserStyle==
+@var myvar var-name 'Customized variable' 123456
+==/UserStyle== */`);
+const va = metadata.vars['var-name'];
+assert.equal(va.type, 'myvar');
+assert.equal(va.label, 'Customized variable');
+assert.equal(va.default, '123456');
+```
 
-This function returns a parser object which contains following members:
+If `allowErrors` is `true`, the parser will collect parsing errors while `parser.parse()` and return them as `parseResult.errors`. Otherwise, the first parsing error will be thrown.
 
-* `parse(text: string): ParseResult object`: Function. Parse the string into a result object.
+### parser.parse
 
-### new ParseError(message, state: object, index: number)
+```js
+const {
+  metadata: Object,
+  errors: Array
+} = parser.parse(text: String);
+```
 
-Use this class to initiate a parse error. When catching the error, `state` and `index` can be accessed from `error.state` and `error.index`.
+Parse the text (metadata header) and return the result.
+
+### ParseError
+
+```js
+throw new ParseError(properties: Object);
+```
+
+Use this class to initiate a parse error.
+
+`properties` would be assigned to the error object. There are some special properties:
+
+* `code` - error code.
+* `message` - error message.
+* `index` - the string index where the error occurs.
+* `args` - an array of values that is used to compose the error message. This allows other clients to generate i18n error message.
+
+A table of errors thrown by the parser:
+
+|`err.code`|`err.args`|Description|
+|----------|----------|-----------|
+|`invalidCheckboxDefault`||Expect 0 or 1.|
+|`invalidNumber`||Expect a number|
+|`invalidSelectEmptyOptions`||The options list of `@var select` is empty.|
+|`invalidString`||Expect a string that is quoted with `'`, `"`, or `` ` ``.|
+|`invalidURLProtocol`|Protocol of the URL|Only http and https are allowed.|
+|`invalidVersion`|Version string|https://github.com/sindresorhus/semver-regex|
+|`invalidWord`||Expect a word.|
+|`missingChar`|A list of valid characters|Expect a specific character.|
+|`missingEOT`||Expect `<<EOT ...` data.|
+|`missingMandatory`|A list of missing keys|This error doesn't have `err.index`.|
+|`unknownJSONLiteral`|Literal value|JSON has only 3 literals: `true`, `false`, and `null`.|
+|`unknownMeta`|Key of unknown metadata|Unknown `@metadata`.|
+|`unknownVarType`|Variable type|Unknown `@var` type.|
 
 ### util
 
@@ -170,7 +228,11 @@ A collection of parser utilities. Some of them might be useful when extending th
 * `parseStringToEnd(state)`: Parse the text value before line feed.
 * `parseWord(state)`: Parse a word. (`[\w-]+`)
 
-### stringify(metadata: object, options?: object): string
+### stringify
+
+```js
+const text = stringify(metadata: Object, options?: Object);
+```
 
 This is a shortcut of:
 
@@ -178,7 +240,11 @@ This is a shortcut of:
 createStringifier(options).stringify(metadata);
 ```
 
-### createStringifier(options?: object): Stringifier object
+### createStringifier
+
+```js
+const stringifier = createStringifier(options?: Object);
+```
 
 `options` may contain following properties:
 
@@ -214,6 +280,13 @@ createStringifier(options).stringify(metadata);
 MIT
 
 ## Changelog
+
+* 0.7.0 (Next)
+
+  - **Breaking: the return value of `parser.parse` is changed.**
+  - **Breaking: the signature of `ParseError` is changed.**
+  - Add: `createParser` now accepts `allowErrors` arg.
+  - Change: some error messages are changed.
 
 * 0.6.1 (Jul 22, 2018)
 
