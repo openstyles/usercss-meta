@@ -281,6 +281,13 @@ MIT
 
 ## Changelog
 
+* 0.7.0 (Next)
+
+  - **Breaking: the return value of `parser.parse` is changed.**
+  - **Breaking: the signature of `ParseError` is changed.**
+  - Add: `createParser` now accepts `allowErrors` arg.
+  - Change: some error messages are changed.
+
 * 0.6.1 (Jul 22, 2018)
 
   - Fix: `stringify` would throw if the value is number instead of string.
