@@ -17,6 +17,7 @@
     "coverage": "nyc report --reporter=html",
     "prepack": "npm run build",
     "preversion": "node prepare-release.js && npm test",
+    "version": "npm run build",
     "postversion": "git push --follow-tags && npm publish"
   },
   "files": [
