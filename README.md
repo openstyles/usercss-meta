@@ -281,7 +281,7 @@ MIT
 
 ## Changelog
 
-* 0.7.0 (Next)
+* 0.7.0 (Sep 9, 2018)
 
   - **Breaking: the return value of `parser.parse` is changed.**
   - **Breaking: the signature of `ParseError` is changed.**
