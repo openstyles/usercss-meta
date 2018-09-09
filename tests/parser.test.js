@@ -63,6 +63,18 @@ test('Unquote multiline', t => {
   });
 });
 
+test('Unescape comment', t => {
+  const meta = String.raw`
+    /* ==UserStyle==
+    @description foo /* *\/
+    ==/UserStyle== */
+  `;
+
+  t.deepEqual(looseParser.parse(meta).metadata, {
+    description: 'foo /* */'
+  });
+});
+
 test('Missing metadata @name', t => {
   const meta = `
     /* ==UserStyle==
