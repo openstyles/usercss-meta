@@ -1,6 +1,7 @@
 /* eslint dot-notation: 0 */
 
 import test from 'ava';
+import endent from 'endent';
 import {stringify, createStringifier} from '..';
 
 test('Default template', t => {
@@ -47,6 +48,18 @@ test('Multi-line description', t => {
   t.is(stringify(meta), String.raw`/* ==UserStyle==
 @description "my\nuserstyle"
 ==/UserStyle== */`);
+});
+
+test('Escape comment', t => {
+  const meta = {
+    description: 'foo /* */'
+  };
+
+  t.is(stringify(meta), endent`
+    /* ==UserStyle==
+    @description foo /* *\/
+    ==/UserStyle== */
+  `);
 });
 
 test('Stringify a number', t => {
