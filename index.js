@@ -1,11 +1,13 @@
-const {parse, createParser, ParseError, util} = require('./lib/parse');
+const util = require('./lib/parse-util');
+const {ParseError} = require('./lib/error');
+const {parse, createParser} = require('./lib/parse');
 const {stringify, createStringifier} = require('./lib/stringify');
 
 module.exports = {
-  parse,
-  createParser,
   ParseError,
   util,
+  parse,
+  createParser,
   stringify,
   createStringifier
 };
