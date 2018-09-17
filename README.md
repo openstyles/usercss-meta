@@ -97,6 +97,8 @@ const parser = createParser({
   mandatoryKeys?: Array<key: String>
   parseKey?: Object,
   parseVar?: Object,
+  validateKey?: Object,
+  validateVar?: Object,
   allowErrors?: Boolean
 });
 ```
@@ -115,20 +117,7 @@ const parser = createParser({
 const parser = createParser({
   mandatoryKeys: [],
   parseKey: {
-    myKey: state => {
-      const rx = /\d+/y;
-      rx.lastIndex = state.lastIndex;
-      const match = rx.exec(state.text);
-      if (!match) {
-        throw new ParseError({
-          message: 'value must be numbers',
-          index: state.lastIndex
-        });
-      }
-      state.index = match.index;
-      state.lastIndex = rx.lastIndex;
-      state.value = match[0];
-    }
+    myKey: util.parseNumber
   }
 });
 const {metadata} = parser.parse(`
@@ -136,29 +125,16 @@ const {metadata} = parser.parse(`
   @myKey 123456
   ==/UserStyle==
 `);
-assert.equal(metadata.myKey, '123456');
+assert.equal(metadata.myKey, 123456);
 ```
 
-`parseVar` is a `varType`/`parseFunction` map. It extends the parser to parse additional variable types. For example:
+`parseVar` is a `variableType`/`parseFunction` map. It extends the parser to parse additional variable types. For example:
 
 ```js
 const parser = createParser({
   mandatoryKeys: [],
   parseVar: {
-    myvar: state => {
-      const rx = /\d+/y;
-      rx.lastIndex = state.lastIndex;
-      const match = rx.exec(state.text);
-      if (!match) {
-        throw new ParseError({
-          message: 'value must be numbers',
-          index: state.lastIndex
-        });
-      }
-      state.index = match.index;
-      state.lastIndex = rx.lastIndex;
-      state.value = match[0];
-    }
+    myvar: util.parseNumber
   }
 });
 const {metadata} = parser.parse(`/* ==UserStyle==
@@ -167,8 +143,58 @@ const {metadata} = parser.parse(`/* ==UserStyle==
 const va = metadata.vars['var-name'];
 assert.equal(va.type, 'myvar');
 assert.equal(va.label, 'Customized variable');
-assert.equal(va.default, '123456');
+assert.equal(va.default, 123456);
 ```
+
+`validateKey` is a `key`/`validateFunction` map, which is used to validate the metadata value. The function accepts a `state` object:
+
+```js
+const parser = createParser({
+  validateKey: {
+    updateURL: state => {
+      if (state.value.test(/example\.com/)) {
+        throw new ParseError({
+          message: 'Example.com is not a good URL',
+          index: state.valueIndex
+        });
+      }
+    }
+  }
+});
+```
+
+There are some builtin validators, which can be overwritten:
+
+|Key|Description|
+|---|-----------|
+|`version`|Ensure the value matches [semver-regex](https://github.com/sindresorhus/semver-regex) then strip the leading `v` or `=`.|
+|`homepageURL`|Ensure it is a valid URL and the protocol must be `http` or `https`.|
+|`updateURL`|Same as above.|
+|`supportURL`|Same as above.|
+
+`validateVar` is a `variableType`/`validateFunction` map, which is used to validate variables. The function accepts a `state` object:
+
+```js
+const parser = createParser({
+  validateVar: {
+    color: state => {
+      if (state.value === 'red') {
+        throw new ParseError({
+          message: '`red` is not allowed',
+          index: state.valueIndex
+        });
+      }
+    }
+  }
+});
+```
+
+Builtin validators:
+
+|Variable Type|Description|
+|-------------|-----------|
+|`checkbox`|Ensure the value is 0 or 1.|
+|`select`|Ensure the options list is not empty.|
 
 If `allowErrors` is `true`, the parser will collect parsing errors while `parser.parse()` and return them as `parseResult.errors`. Otherwise, the first parsing error will be thrown.
 
@@ -253,7 +279,7 @@ const stringifier = createStringifier(options?: Object);
 * `format`: String. Possible values are `'stylus'` and `'xstyle'`. This changes how variables are stringified (`@var` v.s. `@advanced`). Default: `'stylus'`.
 * `stringifyKey`: Object. Extend the stringifier to handle specified keys.
 
-  The object is a map of `key: stringifyFunction` pair. `stringifyFunction` would recieve one argument:
+  The object is a map of `key: stringifyFunction` pair. `stringifyFunction` would receive one argument:
 
   - `value`: The value of the key, which is the same as `metadataObject[key]`.
 
@@ -261,7 +287,7 @@ const stringifier = createStringifier(options?: Object);
 
 * `stringifyVar`: Object. Extend the stringifier to handle custom variable type.
 
-  The object is a map of `varType: stringifyFunction` pair. The function would recieve three arguments:
+  The object is a map of `varType: stringifyFunction` pair. The function would receive three arguments:
 
   - `variable`: The variable which should be stringified, which is the same as `metadataObject.vars[variable.name]`.
   - `format`: The `format` parameter of the option.
