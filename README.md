@@ -214,7 +214,7 @@ A table of errors thrown by the parser:
 |`missingMandatory`|A list of missing keys|This error doesn't have `err.index`.|
 |`unknownJSONLiteral`|Literal value|JSON has only 3 literals: `true`, `false`, and `null`.|
 |`unknownMeta`|Key of unknown metadata|Unknown `@metadata`.|
-|`unknownVarType`|Variable type|Unknown `@var` type.|
+|`unknownVarType`|`[META_KEY, VARIABLE_TYPE]`|Unknown variable type. `META_KEY` could be `var` or `advanced`|
 
 ### util
 
