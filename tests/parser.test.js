@@ -1,7 +1,7 @@
 /* eslint dot-notation: 0 */
 
 import test from 'ava';
-import {createParser, util, parse} from '..';
+import {createParser, util, parse, ParseError} from '..';
 
 const parser = createParser();
 const looseParser = createParser({mandatoryKeys: []});
@@ -510,7 +510,7 @@ test('basic URLs error', t => {
   t.is(drawRange(text, error.index), raw);
 });
 
-test('user parse key', t => {
+test('parseKey', t => {
   const parser = createParser({
     mandatoryKeys: [],
     parseKey: {
@@ -529,7 +529,7 @@ test('user parse key', t => {
   t.is(parser.parse(meta).metadata.myKey, 'Hello OK');
 });
 
-test('user parse var', t => {
+test('parseVar', t => {
   const parser = createParser({
     mandatoryKeys: [],
     parseVar: {
@@ -549,6 +549,48 @@ test('user parse var', t => {
   t.is(va.type, 'color');
   t.is(va.label, 'My color');
   t.is(va.default, '#fff OK');
+});
+
+test('validateKey', t => {
+  const parser = createParser({
+    mandatoryKeys: [],
+    validateKey: {
+      updateURL: null // overwrite default
+    }
+  });
+  const meta = `
+    /* ==UserStyle==
+    @updateURL file:///D:/tmp/test.user.css
+    ==/UserStyle== */
+  `;
+
+  t.is(parser.parse(meta).metadata.updateURL, 'file:///D:/tmp/test.user.css');
+});
+
+test('validateVar', t => {
+  const parser = createParser({
+    mandatoryKeys: [],
+    validateVar: {
+      color: state => {
+        if (state.value === 'red') {
+          throw new ParseError({
+            code: 'invalidColor',
+            index: state.valueIndex
+          });
+        }
+      }
+    }
+  });
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var color my-color "My color" blue
+    @var color my-color2 "My color 2" |red
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => parser.parse(text));
+  t.is(err.code, 'invalidColor');
+  t.is(drawRange(text, err.index), raw);
 });
 
 test('allowErrors', t => {

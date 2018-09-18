@@ -1,6 +1,15 @@
 import test from 'ava';
 import {util} from '..';
 
+test('parseChar error', t => {
+  const error = t.throws(() => util.parseChar({
+    text: '',
+    lastIndex: 0
+  }));
+  t.is(error.index, 0);
+  t.is(error.code, 'EOF');
+});
+
 test('parseWord error', t => {
   const error = t.throws(() => util.parseWord({
     text: 'something *',
