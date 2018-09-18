@@ -15,8 +15,8 @@
     "test": "xo && nyc ava",
     "build": "shx rm -rf dist && rollup -c && rollup -c --environment=UGLIFY",
     "coverage": "nyc report --reporter=html",
-    "prepack": "npm run build",
     "preversion": "node prepare-release.js && npm test",
+    "version": "npm run build",
     "postversion": "git push --follow-tags && npm publish"
   },
   "files": [
