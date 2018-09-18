@@ -152,7 +152,7 @@ assert.equal(va.default, 123456);
 const parser = createParser({
   validateKey: {
     updateURL: state => {
-      if (state.value.test(/example\.com/)) {
+      if (/example\.com/.test(state.value)) {
         throw new ParseError({
           message: 'Example.com is not a good URL',
           index: state.valueIndex
@@ -240,7 +240,7 @@ A table of errors thrown by the parser:
 |`missingMandatory`|A list of missing keys|This error doesn't have `err.index`.|
 |`unknownJSONLiteral`|Literal value|JSON has only 3 literals: `true`, `false`, and `null`.|
 |`unknownMeta`|Key of unknown metadata|Unknown `@metadata`.|
-|`unknownVarType`|`[META_KEY, VARIABLE_TYPE]`|Unknown variable type. `META_KEY` could be `var` or `advanced`|
+|`unknownVarType`|`[META_KEY, VARIABLE_TYPE]`|Unknown variable type. `META_KEY` could be `var` or `advanced`.|
 
 ### util
 
