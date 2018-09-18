@@ -70,6 +70,7 @@
           "avoidEscape": true
         }
       ],
+      "unicorn/catch-error-name": 0,
       "unicorn/prefer-starts-ends-with": 0
     }
   }
