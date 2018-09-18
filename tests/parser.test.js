@@ -501,6 +501,18 @@ test('basic URLs', t => {
 test('basic URLs error', t => {
   const {text, raw} = extractRange(`
     /* ==UserStyle==
+    @homepageURL |../homepage.php
+    ==/UserStyle== */
+  `);
+
+  const error = t.throws(() => looseParser.parse(text));
+  t.is(error.code, 'ERR_INVALID_URL');
+  t.is(drawRange(text, error.index), raw);
+});
+
+test('basic URLs protocol error', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
     @homepageURL |file:///C:/windows
     ==/UserStyle== */
   `);
