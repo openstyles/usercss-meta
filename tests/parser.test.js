@@ -1,7 +1,7 @@
 /* eslint dot-notation: 0 */
 
 import test from 'ava';
-import {createParser, util, parse} from '..';
+import {createParser, util, parse, ParseError} from '..';
 
 const parser = createParser();
 const looseParser = createParser({mandatoryKeys: []});
@@ -501,6 +501,18 @@ test('basic URLs', t => {
 test('basic URLs error', t => {
   const {text, raw} = extractRange(`
     /* ==UserStyle==
+    @homepageURL |../homepage.php
+    ==/UserStyle== */
+  `);
+
+  const error = t.throws(() => looseParser.parse(text));
+  t.is(error.code, 'ERR_INVALID_URL');
+  t.is(drawRange(text, error.index), raw);
+});
+
+test('basic URLs protocol error', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
     @homepageURL |file:///C:/windows
     ==/UserStyle== */
   `);
@@ -510,7 +522,7 @@ test('basic URLs error', t => {
   t.is(drawRange(text, error.index), raw);
 });
 
-test('user parse key', t => {
+test('parseKey', t => {
   const parser = createParser({
     mandatoryKeys: [],
     parseKey: {
@@ -529,7 +541,7 @@ test('user parse key', t => {
   t.is(parser.parse(meta).metadata.myKey, 'Hello OK');
 });
 
-test('user parse var', t => {
+test('parseVar', t => {
   const parser = createParser({
     mandatoryKeys: [],
     parseVar: {
@@ -551,130 +563,46 @@ test('user parse var', t => {
   t.is(va.default, '#fff OK');
 });
 
-test('parseWord error', t => {
-  const error = t.throws(() => util.parseWord({
-    text: 'something *',
-    lastIndex: 10
-  }));
-  t.is(error.index, 10);
-  t.is(error.message, 'Invalid word');
+test('validateKey', t => {
+  const parser = createParser({
+    mandatoryKeys: [],
+    validateKey: {
+      updateURL: null // overwrite default
+    }
+  });
+  const meta = `
+    /* ==UserStyle==
+    @updateURL file:///D:/tmp/test.user.css
+    ==/UserStyle== */
+  `;
+
+  t.is(parser.parse(meta).metadata.updateURL, 'file:///D:/tmp/test.user.css');
 });
 
-test('parseJSON error', t => {
-  const error = t.throws(() => util.parseJSON({
-    text: 'something [abc]',
-    lastIndex: 10
-  }));
-  t.is(error.index, 11);
-  t.is(error.message, "Invalid JSON: Unknown literal 'abc'");
-});
+test('validateVar', t => {
+  const parser = createParser({
+    mandatoryKeys: [],
+    validateVar: {
+      color: state => {
+        if (state.value === 'red') {
+          throw new ParseError({
+            code: 'invalidColor',
+            index: state.valueIndex
+          });
+        }
+      }
+    }
+  });
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var color my-color "My color" blue
+    @var color my-color2 "My color 2" |red
+    ==/UserStyle== */
+  `);
 
-test('parseJSON object error', t => {
-  const error = t.throws(() => util.parseJSON({
-    text: '{"a", "b"}',
-    lastIndex: 0
-  }));
-  t.is(error.index, 4);
-  t.is(error.message, "Invalid JSON: Missing character: ':'");
-});
-
-test('parseJSON object error 2', t => {
-  const error = t.throws(() => util.parseJSON({
-    text: '{"a": "b" "c"}',
-    lastIndex: 0
-  }));
-  t.is(error.index, 10);
-  t.is(error.message, "Invalid JSON: Missing character: ',', '}'");
-});
-
-test('parseJSON array error', t => {
-  const error = t.throws(() => util.parseJSON({
-    text: '["a" "b"]',
-    lastIndex: 0
-  }));
-  t.is(error.index, 5);
-  t.is(error.message, "Invalid JSON: Missing character: ',', ']'");
-});
-
-test('parseJSON multiline string', t => {
-  const state = {
-    text: '`a\nb`',
-    lastIndex: 0
-  };
-  util.parseJSON(state);
-  t.is(state.index, 0);
-  t.is(state.lastIndex, 5);
-  t.is(state.value, 'a\nb');
-});
-
-test('parseJSON number', t => {
-  const state = {
-    text: '123',
-    lastIndex: 0
-  };
-  util.parseJSON(state);
-  t.is(state.index, 0);
-  t.is(state.lastIndex, 3);
-  t.is(state.value, 123);
-});
-
-test('parseJSON prime', t => {
-  const state = {
-    text: '[true, false, null]',
-    lastIndex: 0
-  };
-  util.parseJSON(state);
-  t.is(state.index, 0);
-  t.is(state.lastIndex, 19);
-  t.deepEqual(state.value, [true, false, null]);
-});
-
-test('parseEOT error', t => {
-  const error = t.throws(() => util.parseEOT({
-    text: 'something <<<EOT',
-    lastIndex: 10
-  }));
-  t.is(error.index, 10);
-  t.is(error.message, 'Missing EOT');
-});
-
-test('parseString backtick', t => {
-  const state = {
-    text: 'something `a\nb`',
-    lastIndex: 10
-  };
-  util.parseString(state);
-  t.is(state.value, 'a\nb');
-});
-
-test('parseString escape chars', t => {
-  const state = {
-    text: '"a\\"b\\nc"',
-    lastIndex: 0
-  };
-  util.parseString(state);
-  t.is(state.lastIndex, 9);
-  t.is(state.value, 'a"b\nc');
-});
-
-test('parseString error', t => {
-  const state = {
-    text: 'something ~abc~',
-    lastIndex: 10
-  };
-  const error = t.throws(() => util.parseString(state));
-  t.is(error.index, 10);
-  t.is(error.message, 'Invalid string');
-});
-
-test('parseNumber error', t => {
-  const state = {
-    text: 'o123',
-    lastIndex: 0
-  };
-  const error = t.throws(() => util.parseNumber(state));
-  t.is(error.index, 0);
-  t.is(error.message, 'Invalid number');
+  const err = t.throws(() => parser.parse(text));
+  t.is(err.code, 'invalidColor');
+  t.is(drawRange(text, err.index), raw);
 });
 
 test('allowErrors', t => {
