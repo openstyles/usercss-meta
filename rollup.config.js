@@ -1,24 +1,49 @@
 import cjs from 'rollup-plugin-cjs-es';
-import uglify from 'rollup-plugin-uglify';
+import {terser} from 'rollup-plugin-terser';
 import resolve from 'rollup-plugin-node-resolve';
 
-const {UGLIFY} = process.env;
+function base({
+  output = {},
+  plugins = []
+}) {
+  return {
+    input: 'index.js',
+    output: {
+      format: 'iife',
+      name: 'usercssMeta',
+      freeze: false,
+      legacy: true,
+      sourcemap: true,
+      ...output
+    },
+    plugins: [
+      resolve({
+        browser: true
+      }),
+      cjs({
+        nested: true
+      }),
+      ...plugins
+    ]
+  };
+}
 
-export default {
-  input: 'index.js',
-  output: {
-    file: `dist/usercss-meta${UGLIFY ? '.min' : ''}.js`,
-    format: 'iife',
-    name: 'usercssMeta',
-    freeze: false,
-    legacy: true,
-    sourcemap: true
-  },
-  plugins: [
-    resolve({
-      browser: true
-    }),
-    cjs(),
-    UGLIFY && uglify()
-  ].filter(Boolean)
-};
+export default [
+  base({
+    output: {
+      file: 'dist/usercss-meta.js'
+    }
+  }),
+  base({
+    output: {
+      file: 'dist/usercss-meta.min.js'
+    },
+    plugins: [
+      terser({
+        compress: {
+          passes: 3
+        }
+      })
+    ]
+  })
+];
