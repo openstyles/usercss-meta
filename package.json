@@ -41,7 +41,7 @@
     "endent": "^1.2.0",
     "nyc": "^13.0.1",
     "rollup": "^0.66.0",
-    "rollup-plugin-cjs-es": "^0.6.0",
+    "rollup-plugin-cjs-es": "^0.7.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
     "shx": "^0.3.2",
