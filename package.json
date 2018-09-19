@@ -13,10 +13,10 @@
   },
   "scripts": {
     "test": "xo && nyc ava",
-    "build": "shx rm -rf dist && rollup -c && rollup -c --environment=UGLIFY",
+    "build": "shx rm -rf dist && rollup -c",
     "coverage": "nyc report --reporter=html",
-    "prepack": "npm run build",
     "preversion": "node prepare-release.js && npm test",
+    "version": "npm run build",
     "postversion": "git push --follow-tags && npm publish"
   },
   "files": [
@@ -39,13 +39,13 @@
   "devDependencies": {
     "ava": "*",
     "endent": "^1.2.0",
-    "nyc": "^11.8.0",
-    "rollup": "^0.58.2",
-    "rollup-plugin-cjs-es": "^0.3.2",
-    "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-uglify": "^3.0.0",
-    "shx": "^0.2.2",
-    "xo": "*"
+    "nyc": "^13.0.1",
+    "rollup": "^0.66.0",
+    "rollup-plugin-cjs-es": "^0.7.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-terser": "^3.0.0",
+    "shx": "^0.3.2",
+    "xo": "^0.23.0"
   },
   "xo": {
     "esnext": true,
@@ -70,7 +70,11 @@
           "avoidEscape": true
         }
       ],
+      "unicorn/catch-error-name": 0,
       "unicorn/prefer-starts-ends-with": 0
     }
+  },
+  "dependencies": {
+    "semver-regex": "^2.0.0"
   }
 }
