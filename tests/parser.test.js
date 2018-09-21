@@ -500,20 +500,15 @@ test('@var number array with units', t => {
 });
 
 test('@var number array with too many values', t => {
-  const meta = `
+  const {text, raw} = extractRange(`
     /* ==UserStyle==
-    @var number height "Set height" [10, 0, 100, 10, 20, 'px']
+    @var number height "Set height" |[10, 0, 100, 10, 20, 'px']
     ==/UserStyle== */
-  `;
+  `);
 
-  const va = looseParser.parse(meta).metadata.vars['height'];
-  t.is(va.type, 'number');
-  t.is(va.label, 'Set height');
-  t.is(va.default, 10);
-  t.is(va.min, 0);
-  t.is(va.max, 100);
-  t.is(va.step, 10);
-  t.is(va.units, 'px');
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidRangeTooManyValues');
+  t.is(drawRange(text, err.index), raw);
 });
 
 test('@var number array with multiple units', t => {

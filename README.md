@@ -231,6 +231,7 @@ A table of errors thrown by the parser:
 |`invalidCheckboxDefault`||Expect 0 or 1.|
 |`invalidRange`||Expect a number or an array.|
 |`invalidRangeMultipleUnits`||Two different units are defined.|
+|`invalidRangeTooManyValues`||Too many values in the array.|
 |`invalidRangeValue`||Values in the array must be number, string, or null.|
 |`invalidRangeDefault`|Variable type|The default value of `@var range` must be a number. This error may be thrown when parsing `number` or `range` variables.|
 |`invalidRangeMin`||The value is smaller than the minimum value.|
