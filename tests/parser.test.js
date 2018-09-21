@@ -381,6 +381,18 @@ test('basic @var select specify default with object without name', t => {
   ]);
 });
 
+test('basic @var select specify multiple defaults', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var select theme "Theme" |['dark*', 'light*']
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidSelectMultipleDefaults');
+  t.is(drawRange(text, err.index), raw);
+});
+
 test('basic @var checkbox', t => {
   const meta = `
     /* ==UserStyle==
