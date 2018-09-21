@@ -499,6 +499,100 @@ test('@var number array with units', t => {
   t.is(va.units, 'px');
 });
 
+test('@var number array with multiple units', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var number height "Set height" |[10, 'px', 'em']
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidRangeMultipleUnits');
+  t.is(drawRange(text, err.index), raw);
+});
+
+test('@var number array with bad values', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var number height "Set height" |[10, 'px', []]
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidRangeValue');
+  t.is(drawRange(text, err.index), raw);
+});
+
+test('@var number array invalid', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var number height "Set height" |{}
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidRange');
+  t.is(drawRange(text, err.index), raw);
+});
+
+test('@var number array invalid default', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var number height "Set height" |[null]
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidRangeDefault');
+  t.is(drawRange(text, err.index), raw);
+});
+
+test('@var number array invalid min', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var number height "Set height" |[1, 10]
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidRangeMin');
+  t.is(drawRange(text, err.index), raw);
+});
+
+test('@var number array invalid max', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var number height "Set height" |[1, null, 0]
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidRangeMax');
+  t.is(drawRange(text, err.index), raw);
+});
+
+test('@var number array valid decimal step', t => {
+  const text = `
+    /* ==UserStyle==
+    @var number height "Set height" [30, null, null, 0.1]
+    ==/UserStyle== */
+  `;
+
+  t.notThrows(() => looseParser.parse(text));
+});
+
+test('@var number array invalid step', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var number height "Set height" |[30.01, null, null, 0.1]
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidRangeStep');
+  t.is(drawRange(text, err.index), raw);
+});
+
 test('@var range', t => {
   const meta = `
     /* ==UserStyle==
