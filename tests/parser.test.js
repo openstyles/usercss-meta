@@ -431,6 +431,142 @@ test('basic @var text', t => {
   t.is(va.default, '10px');
 });
 
+test('@var number', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var number height "Set height" 10
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['height'];
+  t.is(va.type, 'number');
+  t.is(va.label, 'Set height');
+  t.is(va.default, 10);
+  t.is(va.min, null);
+  t.is(va.max, null);
+  t.is(va.step, null);
+  t.is(va.units, null);
+});
+
+test('@var number array', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var number height "Set height" [10, 0, 20, 1]
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['height'];
+  t.is(va.type, 'number');
+  t.is(va.label, 'Set height');
+  t.is(va.default, 10);
+  t.is(va.min, 0);
+  t.is(va.max, 20);
+  t.is(va.step, 1);
+  t.is(va.units, null);
+});
+
+test('@var number array with null', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var number height "Set height" [10, 0, null, 1]
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['height'];
+  t.is(va.type, 'number');
+  t.is(va.label, 'Set height');
+  t.is(va.default, 10);
+  t.is(va.min, 0);
+  t.is(va.max, null);
+  t.is(va.step, 1);
+  t.is(va.units, null);
+});
+
+test('@var number array with units', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var number height "Set height" [10, 'px', 0]
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['height'];
+  t.is(va.type, 'number');
+  t.is(va.label, 'Set height');
+  t.is(va.default, 10);
+  t.is(va.min, 0);
+  t.is(va.max, null);
+  t.is(va.step, null);
+  t.is(va.units, 'px');
+});
+
+test('@var range', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var range height "Set height" 10
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['height'];
+  t.is(va.type, 'range');
+  t.is(va.label, 'Set height');
+  t.is(va.default, 10);
+  t.is(va.min, null);
+  t.is(va.max, null);
+  t.is(va.step, null);
+  t.is(va.units, null);
+});
+
+test('@var range array', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var range height "Set height" [10, 0, 20, 1]
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['height'];
+  t.is(va.type, 'range');
+  t.is(va.label, 'Set height');
+  t.is(va.default, 10);
+  t.is(va.min, 0);
+  t.is(va.max, 20);
+  t.is(va.step, 1);
+  t.is(va.units, null);
+});
+
+test('@var range array with null', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var range height "Set height" [10, 0, null, 1]
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['height'];
+  t.is(va.type, 'range');
+  t.is(va.label, 'Set height');
+  t.is(va.default, 10);
+  t.is(va.min, 0);
+  t.is(va.max, null);
+  t.is(va.step, 1);
+  t.is(va.units, null);
+});
+
+test('@var range array with units', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var range height "Set height" [10, 'px', 0]
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['height'];
+  t.is(va.type, 'range');
+  t.is(va.label, 'Set height');
+  t.is(va.default, 10);
+  t.is(va.min, 0);
+  t.is(va.max, null);
+  t.is(va.step, null);
+  t.is(va.units, 'px');
+});
+
 test('basic @advanced text', t => {
   const meta = `
     /* ==UserStyle==
