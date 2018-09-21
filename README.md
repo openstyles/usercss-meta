@@ -231,6 +231,7 @@ A table of errors thrown by the parser:
 |`invalidCheckboxDefault`||Expect 0 or 1.|
 |`invalidNumber`||Expect a number|
 |`invalidSelectEmptyOptions`||The options list of `@var select` is empty.|
+|`invalidSelectMultipleDefaults`||Multiple options are specified as the default value.|
 |`invalidString`||Expect a string that is quoted with `'`, `"`, or `` ` ``.|
 |`invalidURLProtocol`|Protocol of the URL|Only http and https are allowed.|
 |`invalidVersion`|Version string|https://github.com/sindresorhus/semver-regex|

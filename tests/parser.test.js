@@ -275,6 +275,124 @@ test('basic @var select set as an array with built-in label', t => {
   ]);
 });
 
+test('basic @var select specify default', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var select theme "Theme" ['dark', 'light*']
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['theme'];
+  t.is(va.type, 'select');
+  t.is(va.label, 'Theme');
+  t.is(va.default, 'light');
+  t.deepEqual(va.options, [
+    {
+      name: 'dark',
+      label: 'dark',
+      value: 'dark'
+    },
+    {
+      name: 'light',
+      label: 'light',
+      value: 'light'
+    }
+  ]);
+});
+
+test('basic @var select specify default with label', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var select theme "Theme" ['dark:Dark theme', 'light:Light theme*']
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['theme'];
+  t.is(va.type, 'select');
+  t.is(va.label, 'Theme');
+  t.is(va.default, 'light');
+  t.deepEqual(va.options, [
+    {
+      name: 'dark',
+      label: 'Dark theme',
+      value: 'dark'
+    },
+    {
+      name: 'light',
+      label: 'Light theme',
+      value: 'light'
+    }
+  ]);
+});
+
+test('basic @var select specify default with object', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var select theme "Theme" {
+      'dark:Dark theme': 'black',
+      'light:Light theme*': 'white'
+    }
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['theme'];
+  t.is(va.type, 'select');
+  t.is(va.label, 'Theme');
+  t.is(va.default, 'light');
+  t.deepEqual(va.options, [
+    {
+      name: 'dark',
+      label: 'Dark theme',
+      value: 'black'
+    },
+    {
+      name: 'light',
+      label: 'Light theme',
+      value: 'white'
+    }
+  ]);
+});
+
+test('basic @var select specify default with object without name', t => {
+  const meta = `
+    /* ==UserStyle==
+    @var select theme "Theme" {
+      'Dark theme': 'black',
+      'Light theme*': 'white'
+    }
+    ==/UserStyle== */
+  `;
+
+  const va = looseParser.parse(meta).metadata.vars['theme'];
+  t.is(va.type, 'select');
+  t.is(va.label, 'Theme');
+  t.is(va.default, 'Light theme');
+  t.deepEqual(va.options, [
+    {
+      name: 'Dark theme',
+      label: 'Dark theme',
+      value: 'black'
+    },
+    {
+      name: 'Light theme',
+      label: 'Light theme',
+      value: 'white'
+    }
+  ]);
+});
+
+test('basic @var select specify multiple defaults', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    @var select theme "Theme" |['dark*', 'light*']
+    ==/UserStyle== */
+  `);
+
+  const err = t.throws(() => looseParser.parse(text));
+  t.is(err.code, 'invalidSelectMultipleDefaults');
+  t.is(drawRange(text, err.index), raw);
+});
+
 test('basic @var checkbox', t => {
   const meta = `
     /* ==UserStyle==
