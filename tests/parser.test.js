@@ -1,9 +1,9 @@
 /* eslint dot-notation: 0 */
 
+import fs from 'fs';
 import test from 'ava';
 import {createParser, util, parse, ParseError} from '..';
 
-const parser = createParser();
 const looseParser = createParser({mandatoryKeys: []});
 
 function extractRange(text) {
@@ -15,134 +15,50 @@ function extractRange(text) {
   };
 }
 
+function tryReadJSON(path) {
+  let text = null;
+  try {
+    text = fs.readFileSync(path, 'utf8');
+  } catch (err) {
+    return;
+  }
+  return JSON.parse(text);
+}
+
 function drawRange(text, index) {
   return text.slice(0, index) + '|' + text.slice(index);
 }
 
-test('Default template', t => {
-  const meta = `
-    /* ==UserStyle==
-    @name        test
-    @namespace   github.com/openstyles/stylus
-    @version     0.1.0
-    @description my userstyle
-    @author      Me
-    ==/UserStyle== */
-  `;
+for (const dir of fs.readdirSync(`${__dirname}/cases`)) {
+  test(dir, t => {
+    const {text, raw} = extractRange(
+      fs.readFileSync(`${__dirname}/cases/${dir}/text.txt`, 'utf8').replace(/\r/g, '')
+    );
+    const metadata = tryReadJSON(`${__dirname}/cases/${dir}/metadata.json`);
+    const error = tryReadJSON(`${__dirname}/cases/${dir}/error.json`);
 
-  t.deepEqual(parser.parse(meta).metadata, {
-    name: 'test',
-    namespace: 'github.com/openstyles/stylus',
-    version: '0.1.0',
-    description: 'my userstyle',
-    author: 'Me'
+    function run() {
+      return createParser({mandatoryKeys: []}).parse(text);
+    }
+
+    if (error) {
+      const err = t.throws(run);
+      for (const [key, value] of Object.entries(error)) {
+        t.is(err[key], value);
+      }
+      if (err.index != null) {
+        t.is(drawRange(text, err.index), raw);
+      }
+      return;
+    }
+
+    const result = run();
+    t.deepEqual(result.metadata, metadata);
   });
-});
+}
 
-test('Unquote', t => {
-  const meta = `
-    /* ==UserStyle==
-    @description "foo bar"
-    ==/UserStyle== */
-  `;
-
-  t.deepEqual(looseParser.parse(meta).metadata, {
-    description: 'foo bar'
-  });
-});
-
-test('Unquote multiline', t => {
-  const meta = String.raw`
-    /* ==UserStyle==
-    @description "foo\nbar"
-    ==/UserStyle== */
-  `;
-
-  t.deepEqual(looseParser.parse(meta).metadata, {
-    description: 'foo\nbar'
-  });
-});
-
-test('Unescape comment', t => {
-  const meta = String.raw`
-    /* ==UserStyle==
-    @description foo /* *\/
-    ==/UserStyle== */
-  `;
-
-  t.deepEqual(looseParser.parse(meta).metadata, {
-    description: 'foo /* */'
-  });
-});
-
-test('Missing metadata @name', t => {
-  const meta = `
-    /* ==UserStyle==
-    @namespace   github.com/openstyles/stylus
-    @version     0.1.0
-    ==/UserStyle== */
-  `;
-
-  const error = t.throws(() => parser.parse(meta));
-  t.is(error.message, 'Missing metadata: @name');
-});
-
-test('Missing metadata @namespace', t => {
-  const meta = `
-    /* ==UserStyle==
-    @name        test
-    @version     0.1.0
-    ==/UserStyle== */
-  `;
-
-  const error = t.throws(() => parser.parse(meta));
-  t.is(error.message, 'Missing metadata: @namespace');
-});
-
-test('Missing metadata @version', t => {
-  const meta = `
-    /* ==UserStyle==
-    @name        test
-    @namespace   github.com/openstyles/stylus
-    ==/UserStyle== */
-  `;
-
-  const error = t.throws(() => parser.parse(meta));
-  t.is(error.message, 'Missing metadata: @version');
-});
-
-test('Invalid version', t => {
-  const meta = `
-    /* ==UserStyle==
-    @version 0.1.x
-    ==/UserStyle== */
-  `;
-
-  const error = t.throws(() => looseParser.parse(meta));
-  t.is(error.message, 'Invalid version: 0.1.x');
-});
-
-test('Normalize version', t => {
-  const meta = `
-    /* ==UserStyle==
-    @version v0.1.0
-    ==/UserStyle== */
-  `;
-
-  t.is(looseParser.parse(meta).metadata.version, '0.1.0');
-});
-
-test('basic @var color', t => {
-  const meta = `
-    /* ==UserStyle==
-    @var color font-color 'Font-color' #123456
-    ==/UserStyle== */
-  `;
-
-  const va = looseParser.parse(meta).metadata.vars['font-color'];
-  t.is(va.type, 'color');
-  t.is(va.label, 'Font-color');
-  t.is(va.default, '#123456');
+test('mandatoryKeys', t => {
+  // TBD
 });
 
 test('basic @var select', t => {

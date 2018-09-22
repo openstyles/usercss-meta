@@ -1,0 +1,3 @@
+/* ==UserStyle==
+@var color font-color 'Font-color' #123456
+==/UserStyle== */
