@@ -307,7 +307,7 @@ const stringifier = createStringifier(options?: Object);
 ## Related
 
 - [Stylus userstyle manager](https://github.com/openstyles/stylus) - source of most of this code
-- [usercss metadata spec](https://github.com/openstyles/stylus/wiki/Usercss)
+- [usercss metadata spec](https://github.com/openstyles/stylus/wiki/UserCSS-authors)
 - [xStyle metadata spec](https://github.com/FirefoxBar/xStyle/wiki/Style-format#userless-representation) - Also supported by this parser
 
 ## License
