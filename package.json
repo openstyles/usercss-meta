@@ -40,7 +40,7 @@
     "ava": "*",
     "endent": "^1.2.0",
     "nyc": "^13.0.1",
-    "rollup": "^0.66.0",
+    "rollup": "^0.66.2",
     "rollup-plugin-cjs-es": "^0.7.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-terser": "^3.0.0",
@@ -55,7 +55,10 @@
       "comma-dangle": 0,
       "curly": 0,
       "default-case": 0,
-      "eqeqeq": [2, "smart"],
+      "eqeqeq": [
+        2,
+        "smart"
+      ],
       "import/prefer-default-export": 0,
       "linebreak-style": 0,
       "new-cap": 0,
