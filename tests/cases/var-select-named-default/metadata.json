@@ -1,0 +1,23 @@
+{
+  "vars": {
+    "nav-pos": {
+      "name": "nav-pos",
+      "type": "select",
+      "label": "Navbar",
+      "default": "near_white",
+      "options": [
+        {
+          "name": "near_black",
+          "label": "Near Black",
+          "value": "#111111"
+        },
+        {
+          "name": "near_white",
+          "label": "Near White",
+          "value": "#eeeeee"
+        }
+      ],
+      "value": null
+    }
+  }
+}

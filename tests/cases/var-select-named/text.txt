@@ -1,0 +1,6 @@
+/* ==UserStyle==
+@var select nav-pos Navbar {
+  'near_black:Near Black': '#111111',
+  'near_white:Near White': '#eeeeee'
+}
+==/UserStyle== */

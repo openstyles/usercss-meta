@@ -1,0 +1,12 @@
+{
+  "vars": {
+    "affix": {
+      "name": "affix",
+      "type": "checkbox",
+      "label": "Set affixed",
+      "default": "1",
+      "options": null,
+      "value": null
+    }
+  }
+}

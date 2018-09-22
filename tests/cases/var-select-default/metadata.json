@@ -1,0 +1,33 @@
+{
+  "vars": {
+    "nav-pos": {
+      "name": "nav-pos",
+      "type": "select",
+      "label": "Navbar pos",
+      "default": "Right",
+      "options": [
+        {
+          "name": "Top",
+          "label": "Top",
+          "value": "top"
+        },
+        {
+          "name": "Bottom",
+          "label": "Bottom",
+          "value": "bottom"
+        },
+        {
+          "name": "Right",
+          "label": "Right",
+          "value": "right"
+        },
+        {
+          "name": "Left",
+          "label": "Left",
+          "value": "left"
+        }
+      ],
+      "value": null
+    }
+  }
+}
