@@ -14,8 +14,8 @@ const cases = [
 (async () => {
   for (const url of cases) {
     console.log(url);
-    const text = await (await fetch(url)).text();
-    const {metadata} = parse(text);
+    const text = await (await fetch(url)).text(); // eslint-disable-line no-await-in-loop
+    const {metadata} = parse(text.match(RX_HEADER)[0]);
     console.log(metadata);
   }
 })();
