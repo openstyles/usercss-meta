@@ -194,7 +194,8 @@ Builtin validators:
 |Variable Type|Description|
 |-------------|-----------|
 |`checkbox`|Ensure the value is 0 or 1.|
-|`select`|Ensure the options list is not empty.|
+|`number`|Ensure sure the value is a number, doesn't exceed the minimum/maximum, and is a multiple of the step value.|
+|`range`|Same as above.|
 
 If `allowErrors` is `true`, the parser will collect parsing errors while `parser.parse()` and return them as `parseResult.errors`. Otherwise, the first parsing error will be thrown.
 
