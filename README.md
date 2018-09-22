@@ -209,7 +209,6 @@ const {
 
 Parse the text (metadata header) and return the result.
 
-
 ### parser.validateVar
 
 ```js
