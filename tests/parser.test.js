@@ -44,7 +44,7 @@ for (const dir of fs.readdirSync(`${__dirname}/cases`)) {
     if (error) {
       const err = t.throws(run);
       for (const [key, value] of Object.entries(error)) {
-        t.is(err[key], value);
+        t.deepEqual(err[key], value);
       }
       if (err.index != null) {
         t.is(drawRange(text, err.index), raw);
@@ -55,7 +55,8 @@ for (const dir of fs.readdirSync(`${__dirname}/cases`)) {
     const result = run();
     t.deepEqual(result.metadata, metadata);
 
-    const {metadata: newMetadata} = parse(stringify(metadata), {mandatoryKeys: []});
+    const newText = stringify(metadata);
+    const {metadata: newMetadata} = parse(newText, {mandatoryKeys: []});
     t.deepEqual(newMetadata, metadata);
   });
 }

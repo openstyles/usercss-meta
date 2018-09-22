@@ -2,7 +2,7 @@
   "vars": {
     "browser": {
       "name": "browser",
-      "type": "dropdown",
+      "type": "select",
       "label": "Your browser",
       "default": "fx",
       "options": [
@@ -19,5 +19,6 @@
       ],
       "value": null
     }
-  }
+  },
+  "preprocessor": "uso"
 }
