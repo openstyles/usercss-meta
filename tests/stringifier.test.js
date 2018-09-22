@@ -149,6 +149,55 @@ test('var select', t => {
 ==/UserStyle== */`);
 });
 
+test('var select xstyle format', t => {
+  const meta = {
+    vars: {
+      'nav-pos': {
+        type: 'select',
+        name: 'nav-pos',
+        label: 'Navbar pos',
+        options: [
+          {
+            name: 'Top',
+            label: 'Top',
+            value: 'top'
+          },
+          {
+            name: 'Bottom',
+            label: 'Bottom',
+            value: 'bottom'
+          },
+          {
+            name: 'Right',
+            label: 'Right',
+            value: 'right'
+          },
+          {
+            name: 'Left',
+            label: 'Left',
+            value: 'left'
+          },
+        ]
+      }
+    }
+  };
+
+  t.is(stringify(meta, {format: 'xstyle'}), endent`
+    /* ==UserStyle==
+    @advanced dropdown nav-pos "Navbar pos" {
+      Top "Top" <<<EOT
+    top EOT;
+      Bottom "Bottom" <<<EOT
+    bottom EOT;
+      Right "Right" <<<EOT
+    right EOT;
+      Left "Left" <<<EOT
+    left EOT;
+    }
+    ==/UserStyle== */
+  `);
+});
+
 test('var text', t => {
   const meta = {
     vars: {
