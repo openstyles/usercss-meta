@@ -980,3 +980,13 @@ test('allowErrors', t => {
   t.is(result.errors[1].code, 'invalidURLProtocol');
   t.is(result.errors[2].code, 'missingMandatory');
 });
+
+test('parser.validateVar', t => {
+  const parser = createParser();
+  const varObj = {
+    type: 'checkbox',
+    value: '3'
+  };
+  const err = t.throws(() => parser.validateVar(varObj));
+  t.is(err.code, 'invalidCheckboxDefault');
+});
