@@ -1,0 +1,12 @@
+{
+  "vars": {
+    "font-color": {
+      "name": "font-color",
+      "type": "color",
+      "label": "Font-color",
+      "default": "#123456",
+      "options": null,
+      "value": null
+    }
+  }
+}

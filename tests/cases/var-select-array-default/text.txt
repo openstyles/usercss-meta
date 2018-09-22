@@ -1,0 +1,3 @@
+/* ==UserStyle==
+@var select theme "Theme" ['dark', 'light*']
+==/UserStyle== */

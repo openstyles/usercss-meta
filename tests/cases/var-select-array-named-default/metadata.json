@@ -1,0 +1,23 @@
+{
+  "vars": {
+    "theme": {
+      "name": "theme",
+      "type": "select",
+      "label": "Theme",
+      "default": "light",
+      "options": [
+        {
+          "name": "dark",
+          "label": "Dark theme",
+          "value": "dark"
+        },
+        {
+          "name": "light",
+          "label": "Light theme",
+          "value": "light"
+        }
+      ],
+      "value": null
+    }
+  }
+}

@@ -1,0 +1,3 @@
+/* ==UserStyle==
+@advanced color font-color "Font color" #ffffff
+==/UserStyle== */

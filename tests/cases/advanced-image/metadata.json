@@ -1,0 +1,24 @@
+{
+  "vars": {
+    "background": {
+      "name": "background",
+      "type": "image",
+      "label": "Page background",
+      "default": "bg_1",
+      "options": [
+        {
+          "name": "bg_1",
+          "label": "Background 1",
+          "value": "http://example.com/example.jpg"
+        },
+        {
+          "name": "bg_2",
+          "label": "Background 2",
+          "value": "http://example.com/photo.php?id=_A_IMAGE_ID_"
+        }
+      ],
+      "value": null
+    }
+  },
+  "preprocessor": "uso"
+}

@@ -1,0 +1,3 @@
+/* ==UserStyle==
+@var checkbox affix "Set affixed" |2
+==/UserStyle== */

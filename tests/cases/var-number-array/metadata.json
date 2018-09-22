@@ -1,0 +1,16 @@
+{
+  "vars": {
+    "height": {
+      "name": "height",
+      "type": "number",
+      "label": "Set height",
+      "default": 10,
+      "options": null,
+      "value": null,
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "units": null
+    }
+  }
+}

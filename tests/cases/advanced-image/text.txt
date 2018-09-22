@@ -1,0 +1,6 @@
+/* ==UserStyle==
+@advanced image background "Page background" {
+  bg_1 "Background 1" "http://example.com/example.jpg"
+  bg_2 "Background 2" "http://example.com/photo.php?id=_A_IMAGE_ID_"
+}
+==/UserStyle== */

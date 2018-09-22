@@ -1,0 +1,8 @@
+/* ==UserStyle==
+@var select nav-pos "Navbar pos" {
+  "Top": "top",
+  "Bottom": "bottom",
+  "Right": "right",
+  "Left": "left"
+}
+==/UserStyle== */

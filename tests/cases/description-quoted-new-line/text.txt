@@ -1,0 +1,3 @@
+/* ==UserStyle==
+@description "foo\nbar"
+==/UserStyle== */

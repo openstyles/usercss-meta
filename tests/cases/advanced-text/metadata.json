@@ -1,0 +1,13 @@
+{
+  "vars": {
+    "height": {
+      "name": "height",
+      "type": "text",
+      "label": "Set height",
+      "default": "10px",
+      "options": null,
+      "value": null
+    }
+  },
+  "preprocessor": "uso"
+}

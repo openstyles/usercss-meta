@@ -1,0 +1,8 @@
+/* ==UserStyle==
+@advanced dropdown browser "Your browser" {
+  fx "Firefox" <<<EOT
+background-color: red; EOT;
+  cr "Chrome" <<<EOT
+background-color: green; EOT;
+}
+==/UserStyle== */
