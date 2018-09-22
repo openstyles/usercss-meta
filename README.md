@@ -209,6 +209,27 @@ const {
 
 Parse the text (metadata header) and return the result.
 
+
+### parser.validateVar
+
+```js
+parser.validateVar(varObj);
+```
+
+Validate the value of the variable object. This function uses the validators defined in `createParser`.
+
+`varObj` is the variable object in `metadata.vars`:
+
+```js
+const {metadata} = parse(text);
+
+/* modify metadata.vars['some-var'].value ... */
+
+for (const varObj of Object.values(metadata.vars)) {
+  validateVar(varObj);
+}
+```
+
 ### ParseError
 
 ```js
