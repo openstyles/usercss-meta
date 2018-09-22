@@ -1,0 +1,23 @@
+{
+  "vars": {
+    "browser": {
+      "name": "browser",
+      "type": "dropdown",
+      "label": "Your browser",
+      "default": "fx",
+      "options": [
+        {
+          "name": "fx",
+          "label": "Firefox",
+          "value": "background-color: red;"
+        },
+        {
+          "name": "cr",
+          "label": "Chrome",
+          "value": "background-color: green;"
+        }
+      ],
+      "value": null
+    }
+  }
+}
