@@ -77,6 +77,17 @@ test('parseJSON number', t => {
   t.is(state.value, 123);
 });
 
+test('parseJSON decimal', t => {
+  const state = {
+    text: '.123',
+    lastIndex: 0
+  };
+  util.parseJSON(state);
+  t.is(state.index, 0);
+  t.is(state.lastIndex, 4);
+  t.is(state.value, 0.123);
+});
+
 test('parseJSON prime', t => {
   const state = {
     text: '[true, false, null]',
@@ -124,6 +135,17 @@ test('parseString error', t => {
   const error = t.throws(() => util.parseString(state));
   t.is(error.index, 10);
   t.is(error.message, 'Invalid string');
+});
+
+test('parseNumber decimal', t => {
+  const state = {
+    text: '.123',
+    lastIndex: 0
+  };
+  util.parseNumber(state);
+  t.is(state.index, 0);
+  t.is(state.lastIndex, 4);
+  t.is(state.value, 0.123);
 });
 
 test('parseNumber error', t => {
