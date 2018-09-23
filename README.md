@@ -337,6 +337,19 @@ MIT
 
 ## Changelog
 
+* 0.8.0 (Sep 23, 2018)
+
+  - Bump dependencies. Move `semver-regex` to package dependencies.
+  - Change: while parsing `@advanced dropdown`, the result type would be `select`.
+  - Add: the parser/stringifier for `@var number` and `@var range`.
+  - Add: parser method `parser.validateVar`.
+  - Add: now `parseNumber` and `parseJSON` accept decimals without leading zeros e.g. `.5` like CSS.
+  - Add: asterisk syntax in `@var select`.
+  - Add: `validateKey` and `validateVar` arguments to `createParser`.
+  - Fix: when stringifying `@var select` in xstyle format, it should produce `@advanced dropdown` instead of `@advanced select`.
+  - Fix: should throw an error with `@var dropdown`.
+  - Fix: don't assign `advanced` key to metadata object.
+
 * 0.7.1 (Sep 9, 2018)
 
   - **Breaking: the return value of `parser.parse` is changed.**
