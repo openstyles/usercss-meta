@@ -337,6 +337,10 @@ MIT
 
 ## Changelog
 
+* 0.8.1 (Sep 26, 2018)
+
+  - Add: attach variable type to range errors.
+
 * 0.8.0 (Sep 23, 2018)
 
   - Bump dependencies. Move `semver-regex` to package dependencies.
