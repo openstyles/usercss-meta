@@ -250,14 +250,14 @@ A table of errors thrown by the parser:
 |`err.code`|`err.args`|Description|
 |----------|----------|-----------|
 |`invalidCheckboxDefault`||Expect 0 or 1.|
-|`invalidRange`||Expect a number or an array.|
-|`invalidRangeMultipleUnits`||Two different units are defined.|
-|`invalidRangeTooManyValues`||Too many values in the array.|
-|`invalidRangeValue`||Values in the array must be number, string, or null.|
+|`invalidRange`|Variable type|Expect a number or an array.|
+|`invalidRangeMultipleUnits`|Variable type|Two different units are defined.|
+|`invalidRangeTooManyValues`|Variable type|Too many values in the array.|
+|`invalidRangeValue`|Variable type|Values in the array must be number, string, or null.|
 |`invalidRangeDefault`|Variable type|The default value of `@var range` must be a number. This error may be thrown when parsing `number` or `range` variables.|
-|`invalidRangeMin`||The value is smaller than the minimum value.|
-|`invalidRangeMax`||The value is larger than the maximum value.|
-|`invalidRangeStep`||The value is not a multiple of the step value.|
+|`invalidRangeMin`|Variable type|The value is smaller than the minimum value.|
+|`invalidRangeMax`|Variable type|The value is larger than the maximum value.|
+|`invalidRangeStep`|Variable type|The value is not a multiple of the step value.|
 |`invalidNumber`||Expect a number|
 |`invalidSelectEmptyOptions`||The options list of `@var select` is empty.|
 |`invalidSelectMultipleDefaults`||Multiple options are specified as the default value.|
