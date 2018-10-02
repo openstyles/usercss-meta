@@ -258,6 +258,7 @@ A table of errors thrown by the parser:
 |`invalidRangeMin`|Variable type|The value is smaller than the minimum value.|
 |`invalidRangeMax`|Variable type|The value is larger than the maximum value.|
 |`invalidRangeStep`|Variable type|The value is not a multiple of the step value.|
+|`invalidRangeUnits`|`[VARIABLE_TYPE, UNITS]`|The value is not a valid CSS unit.|
 |`invalidNumber`||Expect a number|
 |`invalidSelectEmptyOptions`||The options list of `@var select` is empty.|
 |`invalidSelectMultipleDefaults`||Multiple options are specified as the default value.|
