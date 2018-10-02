@@ -338,6 +338,12 @@ MIT
 
 ## Changelog
 
+* 0.8.2 (Oct 3, 2018)
+
+  - Add: `invalidRangeUnits` error.
+  - Fix: empty variable would make the parser consume the data after `\n`.
+  - Fix: step validator is broken.
+
 * 0.8.1 (Sep 26, 2018)
 
   - Add: attach variable type to range errors.
