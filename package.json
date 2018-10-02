@@ -14,6 +14,7 @@
   "scripts": {
     "test": "xo && nyc ava",
     "build": "shx rm -rf dist && rollup -c",
+    "build-units": "shx rm -rf data/* && node generate-units > data/units.js",
     "coverage": "nyc report --reporter=html",
     "preversion": "node prepare-release.js && npm test",
     "version": "npm run build",
@@ -23,7 +24,8 @@
     "index.js",
     "lib",
     "dist",
-    "shim"
+    "shim",
+    "data"
   ],
   "browser": {
     "url": "./shim/url.js"
@@ -38,6 +40,7 @@
   ],
   "devDependencies": {
     "ava": "*",
+    "cheerio": "^1.0.0-rc.2",
     "endent": "^1.2.0",
     "node-fetch": "^2.2.0",
     "nyc": "^13.0.1",
