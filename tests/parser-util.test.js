@@ -88,6 +88,17 @@ test('parseJSON decimal', t => {
   t.is(state.value, 0.123);
 });
 
+test('parseJSON number exponent', t => {
+  const state = {
+    text: '1e-1',
+    lastIndex: 0
+  };
+  util.parseJSON(state);
+  t.is(state.index, 0);
+  t.is(state.lastIndex, 4);
+  t.is(state.value, 0.1);
+});
+
 test('parseJSON prime', t => {
   const state = {
     text: '[true, false, null]',
