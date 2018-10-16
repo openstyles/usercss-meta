@@ -259,7 +259,9 @@ A table of errors thrown by the parser:
 |`invalidRangeMax`|Variable type|The value is larger than the maximum value.|
 |`invalidRangeStep`|Variable type|The value is not a multiple of the step value.|
 |`invalidRangeUnits`|`[VARIABLE_TYPE, UNITS]`|The value is not a valid CSS unit.|
-|`invalidNumber`||Expect a number|
+|`invalidNumber`||Expect a number.|
+|`invalidSelect`||The value of `@var select` must be an array or an object.|
+|`invalidSelectValue`||The value in the array/object must be a string.|
 |`invalidSelectEmptyOptions`||The options list of `@var select` is empty.|
 |`invalidSelectMultipleDefaults`||Multiple options are specified as the default value.|
 |`invalidString`||Expect a string that is quoted with `'`, `"`, or `` ` ``.|
