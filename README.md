@@ -263,7 +263,9 @@ A table of errors thrown by the parser:
 |`invalidSelect`||The value of `@var select` must be an array or an object.|
 |`invalidSelectValue`||The value in the array/object must be a string.|
 |`invalidSelectEmptyOptions`||The options list of `@var select` is empty.|
+|`invalidSelectLabel`||The label of the option is empty.|
 |`invalidSelectMultipleDefaults`||Multiple options are specified as the default value.|
+|`invalidSelectNameDuplicated`||Found duplicated option names.|
 |`invalidString`||Expect a string that is quoted with `'`, `"`, or `` ` ``.|
 |`invalidURLProtocol`|Protocol of the URL|Only http and https are allowed.|
 |`invalidVersion`|Version string|https://github.com/sindresorhus/semver-regex|
