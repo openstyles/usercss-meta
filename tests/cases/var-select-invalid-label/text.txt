@@ -1,0 +1,5 @@
+/* ==UserStyle==
+@var select nav-pos "Navbar pos" |{
+  "foo:": ""
+}
+==/UserStyle== */
