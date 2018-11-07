@@ -342,6 +342,14 @@ MIT
 
 ## Changelog
 
+* 0.8.3 (Nov 7, 2018)
+
+  - Add: `invalidSelectLabel`/`invalidSelectNameDuplicated` errors.
+  - Add: `invalidSelect`/`invalidSelectValue` errors.
+  - Add: parse number exponent.
+  - Fix: version validator doesn't match the entire string.
+  - Fix: step validator doesn't match against min/max values.
+
 * 0.8.2 (Oct 3, 2018)
 
   - Add: `invalidRangeUnits` error.
