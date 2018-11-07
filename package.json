@@ -1,6 +1,6 @@
 {
   "name": "usercss-meta",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Parse the metadata of usercss used by Stylus extension",
   "license": "MIT",
   "repository": "StylishThemes/parse-usercss",
