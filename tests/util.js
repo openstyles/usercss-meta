@@ -2,6 +2,9 @@ const fs = require('fs');
 
 function extractRange(text) {
   const index = text.indexOf('|');
+  if (index < 0) {
+    return {text};
+  }
   return {
     text: text.slice(0, index) + text.slice(index + 1),
     index,

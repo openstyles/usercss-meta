@@ -9,13 +9,12 @@ for (const dir of fs.readdirSync(caseRoot)) {
   );
   const metadata = tryReadJSON(`${caseRoot}/${dir}/metadata.json`);
   const error = tryReadJSON(`${caseRoot}/${dir}/error.json`);
-  // console.log(caseRoot);
   cases.push({
     name: dir,
     metadata,
     text,
     error,
-    errorIndex: index >= 0 ? index : null
+    errorIndex: index
   });
 }
 const runTest = (usercssMeta, cases) => {
