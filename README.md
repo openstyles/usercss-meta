@@ -340,6 +340,19 @@ const stringifier = createStringifier(options?: Object);
 
 MIT
 
+## Run tests
+
+This repo includes 3 tests:
+
+* `xo` linter - which could be invoked with `xo` command.
+* `ava` test - which could be invoked with `ava` command.
+* Browser test - we currently support Chrome 49+. To run the test:
+
+  1. Run `npm run build` to build the browser dist.
+  2. Run `node browser-test` to generate browser test.
+  3. Open `browser-test.html` with a browser.
+  4. Open the console and ensure everything is OK.
+
 ## Changelog
 
 * 0.8.3 (Nov 7, 2018)

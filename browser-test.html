@@ -1,0 +1,758 @@
+
+<script src="dist/usercss-meta.js"></script>
+<script>((usercssMeta, cases) => {
+  function deepEqual(a, b) {
+    if (typeof a !== typeof b) {
+      return false;
+    }
+    if (!a || !b || typeof a !== 'object' || typeof b !== 'object') {
+      return a === b;
+    }
+    const bKeys = new Set(Object.keys(b));
+    for (const key of Object.keys(a)) {
+      if (!bKeys.has(key)) {
+        return false;
+      }
+      bKeys.delete(key);
+      if (!deepEqual(a[key], b[key])) {
+        return false;
+      }
+    }
+    if (bKeys.size) {
+      return false;
+    }
+    return true;
+  }
+  for (const case_ of cases) {
+    console.log(`%c${case_.name}`, 'color: green');
+    try {
+      const {metadata} = usercssMeta.parse(case_.text, {mandatoryKeys: []});
+      console.assert(deepEqual(metadata, case_.metadata), 'metadata mismatch');
+    } catch (err) {
+      console.assert(case_.error, 'unexpected error');
+      if (!case_.error) {
+        console.error(err);
+      }
+      for (const key of Object.keys(case_.error)) {
+        console.assert(deepEqual(case_.error[key], err[key]), `error ${key} mismatch`);
+      }
+      if (err.index != null) {
+        console.assert(err.index === case_.errorIndex, 'index mismatch');
+      }
+    }
+  }
+  console.log('done');
+})(usercssMeta, [
+  {
+    "name": "advanced-color",
+    "metadata": {
+      "vars": {
+        "font-color": {
+          "name": "font-color",
+          "type": "color",
+          "label": "Font color",
+          "default": "#ffffff",
+          "options": null,
+          "value": null
+        }
+      },
+      "preprocessor": "uso"
+    },
+    "text": "/* ==UserStyle==\n@advanced color font-color \"Font color\" #ffffff\n==/UserStyle== */\n"
+  },
+  {
+    "name": "advanced-dropdown",
+    "metadata": {
+      "vars": {
+        "browser": {
+          "name": "browser",
+          "type": "select",
+          "label": "Your browser",
+          "default": "fx",
+          "options": [
+            {
+              "name": "fx",
+              "label": "Firefox",
+              "value": "background-color: red;"
+            },
+            {
+              "name": "cr",
+              "label": "Chrome",
+              "value": "background-color: green;"
+            }
+          ],
+          "value": null
+        }
+      },
+      "preprocessor": "uso"
+    },
+    "text": "/* ==UserStyle==\n@advanced dropdown browser \"Your browser\" {\n  fx \"Firefox\" <<<EOT\nbackground-color: red; EOT;\n  cr \"Chrome\" <<<EOT\nbackground-color: green; EOT;\n}\n==/UserStyle== */\n"
+  },
+  {
+    "name": "advanced-image",
+    "metadata": {
+      "vars": {
+        "background": {
+          "name": "background",
+          "type": "image",
+          "label": "Page background",
+          "default": "bg_1",
+          "options": [
+            {
+              "name": "bg_1",
+              "label": "Background 1",
+              "value": "http://example.com/example.jpg"
+            },
+            {
+              "name": "bg_2",
+              "label": "Background 2",
+              "value": "http://example.com/photo.php?id=_A_IMAGE_ID_"
+            }
+          ],
+          "value": null
+        }
+      },
+      "preprocessor": "uso"
+    },
+    "text": "/* ==UserStyle==\n@advanced image background \"Page background\" {\n  bg_1 \"Background 1\" \"http://example.com/example.jpg\"\n  bg_2 \"Background 2\" \"http://example.com/photo.php?id=_A_IMAGE_ID_\"\n}\n==/UserStyle== */\n"
+  },
+  {
+    "name": "advanced-image-invalid",
+    "text": "/* ==UserStyle==\n@advanced image background \"Page background\" []\n==/UserStyle== */\n",
+    "error": {
+      "code": "missingChar",
+      "args": [
+        "{"
+      ]
+    },
+    "errorIndex": 62
+  },
+  {
+    "name": "advanced-image-invalid-empty-options",
+    "text": "/* ==UserStyle==\n@advanced image background \"Page background\" {}\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidSelectEmptyOptions"
+    },
+    "errorIndex": 62
+  },
+  {
+    "name": "advanced-text",
+    "metadata": {
+      "vars": {
+        "height": {
+          "name": "height",
+          "type": "text",
+          "label": "Set height",
+          "default": "10px",
+          "options": null,
+          "value": null
+        }
+      },
+      "preprocessor": "uso"
+    },
+    "text": "/* ==UserStyle==\n@advanced text height \"Set height\" \"10px\"\n==/UserStyle== */\n"
+  },
+  {
+    "name": "default-template",
+    "metadata": {
+      "name": "test",
+      "namespace": "github.com/openstyles/stylus",
+      "version": "0.1.0",
+      "description": "my userstyle",
+      "author": "Me"
+    },
+    "text": "/* ==UserStyle==\n@name test\n@namespace github.com/openstyles/stylus\n@version 0.1.0\n@description my userstyle\n@author Me\n==/UserStyle== */\n"
+  },
+  {
+    "name": "description-quoted",
+    "metadata": {
+      "description": "foo bar"
+    },
+    "text": "/* ==UserStyle==\n@description \"foo bar\"\n==/UserStyle== */\n"
+  },
+  {
+    "name": "description-quoted-new-line",
+    "metadata": {
+      "description": "foo\nbar"
+    },
+    "text": "/* ==UserStyle==\n@description \"foo\\nbar\"\n==/UserStyle== */\n"
+  },
+  {
+    "name": "description-quoted-unescape-comment",
+    "metadata": {
+      "description": "foo /* */"
+    },
+    "text": "/* ==UserStyle==\n@description foo /* *\\/\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-checkbox",
+    "metadata": {
+      "vars": {
+        "affix": {
+          "name": "affix",
+          "type": "checkbox",
+          "label": "Set affixed",
+          "default": "1",
+          "options": null,
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var checkbox affix \"Set affixed\" 1\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-checkbox-invalid",
+    "text": "/* ==UserStyle==\n@var checkbox affix \"Set affixed\" 2\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidCheckboxDefault"
+    },
+    "errorIndex": 51
+  },
+  {
+    "name": "var-color",
+    "metadata": {
+      "vars": {
+        "font-color": {
+          "name": "font-color",
+          "type": "color",
+          "label": "Font-color",
+          "default": "#123456",
+          "options": null,
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var color font-color 'Font-color' #123456\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-number",
+    "metadata": {
+      "vars": {
+        "height": {
+          "name": "height",
+          "type": "number",
+          "label": "Set height",
+          "default": 10,
+          "options": null,
+          "value": null,
+          "min": null,
+          "max": null,
+          "step": null,
+          "units": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" 10\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-number-array",
+    "metadata": {
+      "vars": {
+        "height": {
+          "name": "height",
+          "type": "number",
+          "label": "Set height",
+          "default": 10,
+          "options": null,
+          "value": null,
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "units": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [10, 0, 20, 1]\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-number-array-decimal-step",
+    "metadata": {
+      "vars": {
+        "height": {
+          "name": "height",
+          "type": "number",
+          "label": "Set height",
+          "default": 30,
+          "options": null,
+          "value": null,
+          "min": null,
+          "max": null,
+          "step": 0.1,
+          "units": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [30, null, null, 0.1]\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-number-array-null",
+    "metadata": {
+      "vars": {
+        "height": {
+          "name": "height",
+          "type": "number",
+          "label": "Set height",
+          "default": 10,
+          "options": null,
+          "value": null,
+          "min": 0,
+          "max": null,
+          "step": 1,
+          "units": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [10, 0, null, 1]\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-number-array-units",
+    "metadata": {
+      "vars": {
+        "height": {
+          "name": "height",
+          "type": "number",
+          "label": "Set height",
+          "default": 10,
+          "options": null,
+          "value": null,
+          "min": 0,
+          "max": null,
+          "step": null,
+          "units": "px"
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [10, 'px', 0]\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-number-invalid",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" {}\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRange"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-bad-value",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [10, 'px', []]\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeValue"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-default",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [null]\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeDefault"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-max",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [1, null, 0]\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeMax"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-min",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [1, 10]\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeMin"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-multiple-units",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [10, 'px', 'em']\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeMultipleUnits"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-step",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [30.01, null, null, 0.1]\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeStep"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-step-issue-50",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [2, null, null, 3]\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeStep"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-step-max",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [0, 0, 20, 100]\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeStep"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-too-many-values",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [10, 0, 100, 10, 20, 'px']\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeTooManyValues"
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-number-invalid-units",
+    "text": "/* ==UserStyle==\n@var number height \"Set height\" [1, \"1\"]\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidRangeUnits",
+      "args": [
+        "number",
+        "1"
+      ]
+    },
+    "errorIndex": 49
+  },
+  {
+    "name": "var-select",
+    "metadata": {
+      "vars": {
+        "nav-pos": {
+          "name": "nav-pos",
+          "type": "select",
+          "label": "Navbar pos",
+          "default": "Top",
+          "options": [
+            {
+              "name": "Top",
+              "label": "Top",
+              "value": "top"
+            },
+            {
+              "name": "Bottom",
+              "label": "Bottom",
+              "value": "bottom"
+            },
+            {
+              "name": "Right",
+              "label": "Right",
+              "value": "right"
+            },
+            {
+              "name": "Left",
+              "label": "Left",
+              "value": "left"
+            }
+          ],
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var select nav-pos \"Navbar pos\" {\n  \"Top\": \"top\",\n  \"Bottom\": \"bottom\",\n  \"Right\": \"right\",\n  \"Left\": \"left\"\n}\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-select-array",
+    "metadata": {
+      "vars": {
+        "theme": {
+          "name": "theme",
+          "type": "select",
+          "label": "Theme",
+          "default": "dark",
+          "options": [
+            {
+              "name": "dark",
+              "label": "dark",
+              "value": "dark"
+            },
+            {
+              "name": "light",
+              "label": "light",
+              "value": "light"
+            }
+          ],
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var select theme \"Theme\" ['dark', 'light']\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-select-array-default",
+    "metadata": {
+      "vars": {
+        "theme": {
+          "name": "theme",
+          "type": "select",
+          "label": "Theme",
+          "default": "light",
+          "options": [
+            {
+              "name": "dark",
+              "label": "dark",
+              "value": "dark"
+            },
+            {
+              "name": "light",
+              "label": "light",
+              "value": "light"
+            }
+          ],
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var select theme \"Theme\" ['dark', 'light*']\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-select-array-named",
+    "metadata": {
+      "vars": {
+        "theme": {
+          "name": "theme",
+          "type": "select",
+          "label": "Theme",
+          "default": "dark",
+          "options": [
+            {
+              "name": "dark",
+              "label": "Dark theme",
+              "value": "dark"
+            },
+            {
+              "name": "light",
+              "label": "Light theme",
+              "value": "light"
+            }
+          ],
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var select theme \"Theme\" ['dark:Dark theme', 'light:Light theme']\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-select-array-named-default",
+    "metadata": {
+      "vars": {
+        "theme": {
+          "name": "theme",
+          "type": "select",
+          "label": "Theme",
+          "default": "light",
+          "options": [
+            {
+              "name": "dark",
+              "label": "Dark theme",
+              "value": "dark"
+            },
+            {
+              "name": "light",
+              "label": "Light theme",
+              "value": "light"
+            }
+          ],
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var select theme \"Theme\" ['dark:Dark theme', 'light:Light theme*']\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-select-default",
+    "metadata": {
+      "vars": {
+        "nav-pos": {
+          "name": "nav-pos",
+          "type": "select",
+          "label": "Navbar pos",
+          "default": "Right",
+          "options": [
+            {
+              "name": "Top",
+              "label": "Top",
+              "value": "top"
+            },
+            {
+              "name": "Bottom",
+              "label": "Bottom",
+              "value": "bottom"
+            },
+            {
+              "name": "Right",
+              "label": "Right",
+              "value": "right"
+            },
+            {
+              "name": "Left",
+              "label": "Left",
+              "value": "left"
+            }
+          ],
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var select nav-pos \"Navbar pos\" {\n  \"Top\": \"top\",\n  \"Bottom\": \"bottom\",\n  \"Right*\": \"right\",\n  \"Left\": \"left\"\n}\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-select-empty-options",
+    "text": "/* ==UserStyle==\n@var select nav-pos \"Navbar pos\" {}\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidSelectEmptyOptions"
+    },
+    "errorIndex": 50
+  },
+  {
+    "name": "var-select-invalid",
+    "text": "/* ==UserStyle==\n@var select nav-pos \"Navbar pos\" \"foo\"\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidSelect"
+    },
+    "errorIndex": 50
+  },
+  {
+    "name": "var-select-invalid-label",
+    "text": "/* ==UserStyle==\n@var select nav-pos \"Navbar pos\" {\n  \"foo:\": \"\"\n}\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidSelectLabel"
+    },
+    "errorIndex": 50
+  },
+  {
+    "name": "var-select-invalid-multi-defaults",
+    "text": "/* ==UserStyle==\n@var select nav-pos \"Navbar pos\" {\n  \"Top\": \"top\",\n  \"Bottom*\": \"bottom\",\n  \"Right*\": \"right\",\n  \"Left\": \"left\"\n}\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidSelectMultipleDefaults"
+    },
+    "errorIndex": 50
+  },
+  {
+    "name": "var-select-invalid-name-duplicated",
+    "text": "/* ==UserStyle==\n@var select nav-pos \"Navbar pos\" {\n  \"foo:A foo\": \"\",\n  \"foo:A bar\": \"\"\n}\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidSelectNameDuplicated"
+    },
+    "errorIndex": 50
+  },
+  {
+    "name": "var-select-invalid-value",
+    "text": "/* ==UserStyle==\n@var select nav-pos \"Navbar pos\" [1, 2, 3]\n==/UserStyle== */\n",
+    "error": {
+      "code": "invalidSelectValue"
+    },
+    "errorIndex": 50
+  },
+  {
+    "name": "var-select-named",
+    "metadata": {
+      "vars": {
+        "nav-pos": {
+          "name": "nav-pos",
+          "type": "select",
+          "label": "Navbar",
+          "default": "near_black",
+          "options": [
+            {
+              "name": "near_black",
+              "label": "Near Black",
+              "value": "#111111"
+            },
+            {
+              "name": "near_white",
+              "label": "Near White",
+              "value": "#eeeeee"
+            }
+          ],
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var select nav-pos Navbar {\n  'near_black:Near Black': '#111111',\n  'near_white:Near White': '#eeeeee'\n}\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-select-named-default",
+    "metadata": {
+      "vars": {
+        "nav-pos": {
+          "name": "nav-pos",
+          "type": "select",
+          "label": "Navbar",
+          "default": "near_white",
+          "options": [
+            {
+              "name": "near_black",
+              "label": "Near Black",
+              "value": "#111111"
+            },
+            {
+              "name": "near_white",
+              "label": "Near White",
+              "value": "#eeeeee"
+            }
+          ],
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var select nav-pos Navbar {\n  'near_black:Near Black': '#111111',\n  'near_white:Near White*': '#eeeeee'\n}\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-text",
+    "metadata": {
+      "vars": {
+        "height": {
+          "name": "height",
+          "type": "text",
+          "label": "Set height",
+          "default": "10px",
+          "options": null,
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var text height \"Set height\" 10px\n==/UserStyle== */\n"
+  },
+  {
+    "name": "var-text-empty",
+    "metadata": {
+      "vars": {
+        "height": {
+          "name": "height",
+          "type": "text",
+          "label": "Set height",
+          "default": "",
+          "options": null,
+          "value": null
+        }
+      }
+    },
+    "text": "/* ==UserStyle==\n@var text height \"Set height\"\n==/UserStyle== */\n"
+  },
+  {
+    "name": "version",
+    "metadata": {
+      "version": "0.1.0"
+    },
+    "text": "/* ==UserStyle==\n@version v0.1.0\n==/UserStyle== */\n"
+  },
+  {
+    "name": "version-invalid",
+    "text": "/* ==UserStyle==\n@version 0.1.x\n==/UserStyle== */\n",
+    "error": {
+      "message": "Invalid version: 0.1.x"
+    },
+    "errorIndex": 26
+  },
+  {
+    "name": "version-invalid-must-match-full",
+    "text": "/* ==UserStyle==\n@version 0.1.1.1\n==/UserStyle== */\n",
+    "error": {
+      "message": "Invalid version: 0.1.1.1"
+    },
+    "errorIndex": 26
+  }
+])</script>

@@ -2,17 +2,7 @@ import fs from 'fs';
 import test from 'ava';
 
 import {stringify, parse} from '..';
-import {drawRange, extractRange} from './util';
-
-function tryReadJSON(path) {
-  let text = null;
-  try {
-    text = fs.readFileSync(path, 'utf8');
-  } catch (err) {
-    return;
-  }
-  return JSON.parse(text);
-}
+import {drawRange, extractRange, tryReadJSON} from './util';
 
 for (const dir of fs.readdirSync(`${__dirname}/cases`)) {
   test(dir, t => {
