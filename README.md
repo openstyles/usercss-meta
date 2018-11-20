@@ -355,6 +355,10 @@ This repo includes 3 tests:
 
 ## Changelog
 
+* 0.8.4 (Nov 20, 2018)
+
+  - Add: support Chrome 49.
+
 * 0.8.3 (Nov 7, 2018)
 
   - Add: `invalidSelectLabel`/`invalidSelectNameDuplicated` errors.
