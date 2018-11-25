@@ -3,10 +3,10 @@
   "version": "0.8.4",
   "description": "Parse the metadata of usercss used by Stylus extension",
   "license": "MIT",
-  "repository": "StylishThemes/parse-usercss",
+  "repository": "openstyles/usercss-meta",
   "author": {
-    "name": "StylishThemes",
-    "url": "https://github.com/StylishThemes"
+    "name": "openstyles",
+    "url": "https://github.com/openstyles"
   },
   "engines": {
     "node": ">=6"
