@@ -356,6 +356,12 @@ This repo includes 3 tests:
 
 ## Changelog
 
+* 0.9.0 (Nov 26, 2018)
+
+  - The repository is moved.
+  - **Change: `parseStringToEnd` now throws an error if matched nothing.**
+  - Add: `missingValue` error.
+
 * 0.8.4 (Nov 20, 2018)
 
   - Add: support Chrome 49.
