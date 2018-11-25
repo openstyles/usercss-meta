@@ -154,7 +154,7 @@ test('parseStringToEnd error', t => {
     lastIndex: 3
     const err = t.throws(() => util.parseStringToEnd(state));
     t.is(error.index, 3);
-    t.is(error.code, 'missingString');
+    t.is(error.code, 'missingValue');
   }
 });
 
