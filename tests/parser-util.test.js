@@ -148,6 +148,16 @@ test('parseString error', t => {
   t.is(error.message, 'Invalid string');
 });
 
+test('parseStringToEnd error', t => {
+  const state = {
+    text: 'foo  \nbar',
+    lastIndex: 3
+  };
+  const err = t.throws(() => util.parseStringToEnd(state));
+  t.is(err.index, 5);
+  t.is(err.code, 'missingValue');
+});
+
 test('parseNumber decimal', t => {
   const state = {
     text: '.123',

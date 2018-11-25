@@ -19,6 +19,33 @@ test('missing mandatory', t => {
   t.deepEqual(err.args, ['namespace', 'version']);
 });
 
+test('missing mandatory value', t => {
+  const err = t.throws(() => {
+    parse(`
+      /* ==UserStyle==
+      @name ""
+      @namespace bar
+      @version 0.1.0
+      ==/UserStyle== */
+    `);
+  });
+  t.is(err.code, 'missingMandatory');
+  t.deepEqual(err.args, ['name']);
+});
+
+test('missing mandatory (missing value)', t => {
+  const err = t.throws(() => {
+    parse(`
+      /* ==UserStyle==
+      @name foo
+      @namespace
+      @version 0.1.0
+      ==/UserStyle== */
+    `);
+  });
+  t.is(err.code, 'missingValue');
+});
+
 test('unknown var type', t => {
   const {text, raw} = extractRange(`
     /* ==UserStyle==

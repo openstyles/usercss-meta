@@ -273,6 +273,7 @@ A table of errors thrown by the parser:
 |`missingChar`|A list of valid characters|Expect a specific character.|
 |`missingEOT`||Expect `<<EOT ...` data.|
 |`missingMandatory`|A list of missing keys|This error doesn't have `err.index`.|
+|`missingValue`||Expect a non-whitespace value.|
 |`unknownJSONLiteral`|Literal value|JSON has only 3 literals: `true`, `false`, and `null`.|
 |`unknownMeta`|Key of unknown metadata|Unknown `@metadata`.|
 |`unknownVarType`|`[META_KEY, VARIABLE_TYPE]`|Unknown variable type. `META_KEY` could be `var` or `advanced`.|
