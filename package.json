@@ -43,7 +43,7 @@
     "cheerio": "^1.0.0-rc.2",
     "endent": "^1.2.0",
     "node-fetch": "^2.2.0",
-    "nyc": "^13.0.1",
+    "nyc": "^15.1.0",
     "rollup": "^0.66.2",
     "rollup-plugin-cjs-es": "^0.7.0",
     "rollup-plugin-node-resolve": "^3.4.0",
