@@ -57,7 +57,7 @@ test('Escape comment', t => {
 
   t.is(stringify(meta), endent`
     /* ==UserStyle==
-    @description foo /* *\/
+    @description foo /* *\\/
     ==/UserStyle== */
   `);
 });
