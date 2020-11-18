@@ -1,8 +1,8 @@
-import fs from 'fs';
-import test from 'ava';
+const fs = require('fs');
+const test = require('ava');
 
-import {stringify, parse} from '..';
-import {drawRange, extractRange, tryReadJSON} from './util';
+const {stringify, parse} = require('..');
+const {drawRange, extractRange, tryReadJSON} = require('./util');
 
 for (const dir of fs.readdirSync(`${__dirname}/cases`)) {
   test(dir, t => {

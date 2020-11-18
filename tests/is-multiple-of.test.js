@@ -1,5 +1,5 @@
-import test from 'ava';
-import {isMultipleOf} from '../lib/parse';
+const test = require('ava');
+const {isMultipleOf} = require('../lib/parse');
 
 test('isMultipleOf', t => {
   t.truthy(isMultipleOf(0.3, 0.1));
