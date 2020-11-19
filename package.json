@@ -9,10 +9,10 @@
     "url": "https://github.com/openstyles"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8.3"
   },
   "scripts": {
-    "test": "xo && nyc ava tests/*.test.js",
+    "test": "xo && nyc ava",
     "build": "shx rm -rf dist && rollup -c",
     "build-units": "shx rm -rf data/* && node generate-units > data/units.js",
     "coverage": "nyc report --reporter=html",
@@ -79,10 +79,18 @@
           "avoidEscape": true
         }
       ],
+      "node/no-path-concat": 0,
       "unicorn/catch-error-name": 0,
+      "unicorn/no-reduce": 0,
+      "unicorn/prefer-optional-catch-binding": 0,
       "unicorn/prefer-starts-ends-with": 0,
       "unicorn/prefer-exponentiation-operator": 0
     }
+  },
+  "ava": {
+    "files": [
+      "tests/*.test.js"
+    ]
   },
   "dependencies": {
     "semver-regex": "^3.1.1"

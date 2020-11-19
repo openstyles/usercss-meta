@@ -17,29 +17,36 @@ for (const dir of fs.readdirSync(caseRoot)) {
     errorIndex: index
   });
 }
+
 const runTest = (usercssMeta, cases) => {
   function deepEqual(a, b) {
     if (typeof a !== typeof b) {
       return false;
     }
+
     if (!a || !b || typeof a !== 'object' || typeof b !== 'object') {
       return a === b;
     }
+
     const bKeys = new Set(Object.keys(b));
     for (const key of Object.keys(a)) {
       if (!bKeys.has(key)) {
         return false;
       }
+
       bKeys.delete(key);
       if (!deepEqual(a[key], b[key])) {
         return false;
       }
     }
+
     if (bKeys.size) {
       return false;
     }
+
     return true;
   }
+
   for (const case_ of cases) {
     console.log(`%c${case_.name}`, 'color: green');
     try {
@@ -50,16 +57,20 @@ const runTest = (usercssMeta, cases) => {
       if (!case_.error) {
         console.error(err);
       }
+
       for (const key of Object.keys(case_.error)) {
         console.assert(deepEqual(case_.error[key], err[key]), `error ${key} mismatch`);
       }
+
       if (err.index != null) {
         console.assert(err.index === case_.errorIndex, 'index mismatch');
       }
     }
   }
+
   console.log('done');
 };
+
 fs.writeFileSync('browser-test.html', `
 <script src="dist/usercss-meta.js"></script>
 <script>(${runTest})(usercssMeta, ${JSON.stringify(cases, null, 2)})</script>

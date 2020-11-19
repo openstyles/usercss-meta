@@ -21,9 +21,11 @@ for (const dir of fs.readdirSync(`${__dirname}/cases`)) {
       for (const [key, value] of Object.entries(error)) {
         t.deepEqual(err[key], value);
       }
+
       if (err.index != null) {
         t.is(drawRange(text, err.index), raw);
       }
+
       return;
     }
 
