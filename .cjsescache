@@ -1,4 +1,4 @@
-{
-  "data/units.js": null,
-  "node_modules/semver-regex/index.js": null
-}
+[
+  "data/units.js",
+  "node_modules/semver-regex/index.js"
+]
