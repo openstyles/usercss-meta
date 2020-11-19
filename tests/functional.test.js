@@ -1,5 +1,5 @@
 const test = require('ava');
-const endent = require('endent');
+const {default: endent} = require('endent');
 const usercssMeta = require('..');
 
 test('Readme example', t => {

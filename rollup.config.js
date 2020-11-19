@@ -1,6 +1,6 @@
 import cjs from 'rollup-plugin-cjs-es';
 import {terser} from 'rollup-plugin-terser';
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 
 function base({
   output = {},
@@ -12,7 +12,6 @@ function base({
       format: 'iife',
       name: 'usercssMeta',
       freeze: false,
-      legacy: true,
       sourcemap: true,
       ...output
     },
@@ -28,6 +27,7 @@ function base({
   };
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default [
   base({
     output: {

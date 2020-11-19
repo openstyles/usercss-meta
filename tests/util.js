@@ -5,6 +5,7 @@ function extractRange(text) {
   if (index < 0) {
     return {text};
   }
+
   return {
     text: text.slice(0, index) + text.slice(index + 1),
     index,
@@ -20,9 +21,10 @@ function tryReadJSON(path) {
   let text = null;
   try {
     text = fs.readFileSync(path, 'utf8');
-  } catch (err) {
+  } catch (_) {
     return;
   }
+
   return JSON.parse(text);
 }
 

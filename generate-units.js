@@ -11,6 +11,7 @@ fetch('https://drafts.csswg.org/css-values-4/')
       if (!level || !/^[67]\./.test(level)) {
         return;
       }
+
       $(heading).find('.css').each((i, css) => {
         const unit = $(css).text();
         if (unit[0] !== '<') {

@@ -248,10 +248,10 @@ test('allowErrors', t => {
 
 test('parser.validateVar', t => {
   const parser = createParser();
-  const varObj = {
+  const varObject = {
     type: 'checkbox',
     value: '3'
   };
-  const err = t.throws(() => parser.validateVar(varObj));
+  const err = t.throws(() => parser.validateVar(varObject));
   t.is(err.code, 'invalidCheckboxDefault');
 });

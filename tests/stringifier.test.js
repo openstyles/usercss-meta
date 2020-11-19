@@ -1,7 +1,7 @@
 /* eslint dot-notation: 0 */
 
 const test = require('ava');
-const endent = require('endent');
+const {default: endent} = require('endent');
 const {stringify, createStringifier} = require('..');
 
 test('Default template', t => {
