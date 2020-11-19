@@ -356,6 +356,12 @@ This repo includes 3 tests:
 
 ## Changelog
 
+* 0.10.0 (Nov 19, 2020)
+
+  - Fix: precision issue when validating decimals.
+  - Change: allow hyphen in key name.
+  - Change: bump node version to 8.3.0.
+
 * 0.9.0 (Nov 26, 2018)
 
   - The repository is moved.
