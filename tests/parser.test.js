@@ -1,9 +1,9 @@
 /* eslint dot-notation: 0 */
 
-import test from 'ava';
+const test = require('ava');
 
-import {createParser, parse, util, ParseError} from '..';
-import {drawRange, extractRange} from './util';
+const {createParser, parse, util, ParseError} = require('..');
+const {drawRange, extractRange} = require('./util');
 
 const looseParser = createParser({mandatoryKeys: []});
 

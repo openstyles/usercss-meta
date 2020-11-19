@@ -1,8 +1,8 @@
 /* eslint dot-notation: 0 */
 
-import test from 'ava';
-import endent from 'endent';
-import {stringify, createStringifier} from '..';
+const test = require('ava');
+const endent = require('endent');
+const {stringify, createStringifier} = require('..');
 
 test('Default template', t => {
   const meta = {
@@ -57,7 +57,7 @@ test('Escape comment', t => {
 
   t.is(stringify(meta), endent`
     /* ==UserStyle==
-    @description foo /* *\/
+    @description foo /* *\\/
     ==/UserStyle== */
   `);
 });

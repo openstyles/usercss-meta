@@ -1,5 +1,5 @@
-import test from 'ava';
-import {util} from '..';
+const test = require('ava');
+const {util} = require('..');
 
 test('parseChar error', t => {
   const error = t.throws(() => util.parseChar({
