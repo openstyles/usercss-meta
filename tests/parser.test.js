@@ -99,6 +99,20 @@ test('unknownKey throw', t => {
   t.is(drawRange(text, error.index), raw);
 });
 
+test('unknownKey throw with hyphen', t => {
+  const {text, raw} = extractRange(`
+    /* ==UserStyle==
+    |@my-key 123 456
+    ==/UserStyle== */
+  `);
+
+  const error = t.throws(() => {
+    parse(text, {unknownKey: 'throw', mandatoryKeys: []});
+  });
+  t.is(error.message, 'Unknown metadata: @my-key');
+  t.is(drawRange(text, error.index), raw);
+});
+
 test('unknownKey invalid', t => {
   const meta = `
     /* ==UserStyle==
