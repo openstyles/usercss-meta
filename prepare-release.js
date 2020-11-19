@@ -1,6 +1,6 @@
 const {execSync} = require('child_process');
 
-const repoName = 'StylishThemes/parse-usercss';
+const repoName = 'openstyles/usercss-meta';
 
 function exec(command) {
   return execSync(command, {encoding: 'utf8'});
