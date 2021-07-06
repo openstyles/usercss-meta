@@ -64,6 +64,7 @@
         "smart"
       ],
       "import/prefer-default-export": 0,
+      "import/extensions": 0,
       "linebreak-style": 0,
       "new-cap": 0,
       "no-mixed-operators": 0,
@@ -81,10 +82,15 @@
       ],
       "node/no-path-concat": 0,
       "unicorn/catch-error-name": 0,
+      "unicorn/explicit-length-check": 0,
       "unicorn/no-reduce": 0,
+      "unicorn/no-array-for-each": 0,
+      "unicorn/no-array-reduce": 0,
       "unicorn/prefer-optional-catch-binding": 0,
       "unicorn/prefer-starts-ends-with": 0,
-      "unicorn/prefer-exponentiation-operator": 0
+      "unicorn/prefer-exponentiation-operator": 0,
+      "unicorn/prefer-module": 0,
+      "unicorn/prevent-abbreviations": 0
     }
   },
   "ava": {
