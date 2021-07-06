@@ -1,4 +1,4 @@
-/* eslint no-loss-of-precision: 0 */
+/* eslint no-loss-of-precision: 0, unicorn/numeric-separators-style: 0 */
 
 const test = require('ava');
 const {isMultipleOf} = require('../lib/parse');

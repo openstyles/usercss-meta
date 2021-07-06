@@ -49,7 +49,7 @@
     "rollup-plugin-cjs-es": "^1.0.1",
     "rollup-plugin-terser": "^7.0.2",
     "shx": "^0.3.3",
-    "xo": "^0.34.2"
+    "xo": "^0.41.0"
   },
   "xo": {
     "esnext": true,
@@ -64,6 +64,7 @@
         "smart"
       ],
       "import/prefer-default-export": 0,
+      "import/extensions": 0,
       "linebreak-style": 0,
       "new-cap": 0,
       "no-mixed-operators": 0,
@@ -71,6 +72,9 @@
       "operator-linebreak": 0,
       "padded-blocks": 0,
       "prefer-destructuring": 0,
+      "prefer-exponentiation-operator": 0,
+      "prefer-object-spread": 0,
+      "prefer-spread": 0,
       "quote-props": 0,
       "quotes": [
         2,
@@ -81,10 +85,15 @@
       ],
       "node/no-path-concat": 0,
       "unicorn/catch-error-name": 0,
+      "unicorn/explicit-length-check": 0,
       "unicorn/no-reduce": 0,
+      "unicorn/no-array-for-each": 0,
+      "unicorn/no-array-reduce": 0,
       "unicorn/prefer-optional-catch-binding": 0,
       "unicorn/prefer-starts-ends-with": 0,
-      "unicorn/prefer-exponentiation-operator": 0
+      "unicorn/prefer-exponentiation-operator": 0,
+      "unicorn/prefer-module": 0,
+      "unicorn/prevent-abbreviations": 0
     }
   },
   "ava": {
@@ -92,10 +101,10 @@
       "tests/*.test.js"
     ]
   },
-  "dependencies": {
-    "semver-regex": "^3.1.1"
-  },
   "nyc": {
     "exclude": "tests"
+  },
+  "dependencies": {
+    "semver-regex": "^2.0.0"
   }
 }
