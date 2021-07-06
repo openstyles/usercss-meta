@@ -103,8 +103,5 @@
   },
   "nyc": {
     "exclude": "tests"
-  },
-  "dependencies": {
-    "semver-regex": "^2.0.0"
   }
 }
