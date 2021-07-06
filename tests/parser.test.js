@@ -251,7 +251,7 @@ test('allowErrors', t => {
   const result = parser.parse(`
     /* ==UserStyle==
     @name foo
-    @version 0.1.01
+    @version x.y.z
     @supportURL ftp://example.com
     ==/UserStyle== */
   `);
