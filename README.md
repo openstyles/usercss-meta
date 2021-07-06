@@ -356,6 +356,10 @@ This repo includes 3 tests:
 
 ## Changelog
 
+* 0.10.1 (Jul 6, 2021)
+
+  - Fix: remove incompat features. Pass Chrome 49 browser test.
+
 * 0.10.0 (Nov 19, 2020)
 
   - Fix: precision issue when validating decimals.
