@@ -72,6 +72,9 @@
       "operator-linebreak": 0,
       "padded-blocks": 0,
       "prefer-destructuring": 0,
+      "prefer-exponentiation-operator": 0,
+      "prefer-object-spread": 0,
+      "prefer-spread": 0,
       "quote-props": 0,
       "quotes": [
         2,
