@@ -1,6 +1,6 @@
 {
   "name": "usercss-meta",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Parse the metadata of usercss used by Stylus extension",
   "license": "MIT",
   "repository": "openstyles/usercss-meta",
