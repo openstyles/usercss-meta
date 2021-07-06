@@ -1,4 +1,6 @@
 const fs = require('fs');
+const readline = require('readline');
+
 const {extractRange, tryReadJSON} = require('./tests/util');
 
 const cases = [];
@@ -75,3 +77,14 @@ fs.writeFileSync('browser-test.html', `
 <script src="dist/usercss-meta.js"></script>
 <script>(${runTest})(usercssMeta, ${JSON.stringify(cases, null, 2)})</script>
 `, 'utf8');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+rl.question('Open browser-test.html and check if all tests have passed (y/N): ', ans => {
+  if (!/y/i.test(ans)) {
+    process.exit(1); // eslint-disable-line unicorn/no-process-exit
+  }
+});

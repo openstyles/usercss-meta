@@ -16,7 +16,7 @@
     "build": "shx rm -rf dist && rollup -c",
     "build-units": "shx rm -rf data/* && node generate-units > data/units.js",
     "coverage": "nyc report --reporter=html",
-    "preversion": "node prepare-release.js && npm test",
+    "preversion": "node prepare-release.js && npm test && npm run build && node browser-test",
     "version": "npm run build",
     "postversion": "git push --follow-tags && npm publish"
   },
