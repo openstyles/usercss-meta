@@ -87,5 +87,6 @@ rl.question('Open browser-test.html and check if all tests have passed (y/N): ',
   if (!/y/i.test(ans)) {
     process.exit(1); // eslint-disable-line unicorn/no-process-exit
   }
+
   rl.close();
 });
