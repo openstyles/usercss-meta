@@ -243,7 +243,7 @@ Use this class to initiate a parse error.
 * `code` - error code.
 * `message` - error message.
 * `index` - the string index where the error occurs.
-* `args` - an array of values that is used to compose the error message. This allows other clients to generate i18n error message.
+* `args` - an array of values that is used to compose the error message. This allows other clients to generate i18n error message. If the error code is unknownXXX the last value of this array would be a suggestive change in which the correct value is set, if it couldn't be find it will be `undefined` and couldn't find an suggestive change.
 
 A table of errors thrown by the parser:
 

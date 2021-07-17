@@ -247,14 +247,15 @@ test('validateVar', t => {
 test('suggestive metadata', t => {
   const {text, raw} = extractRange(`
     /* ==UserStyle==
-    |@namu This is my style's name.
+    |@advance color font-color "Font color" #ffffff
     ==/UserStyle== */
   `);
 
   const error = t.throws(() => {
     parse(text, {unknownKey: 'throw', mandatoryKeys: []});
   });
-  t.is(error.message, 'Unknown metadata: @namu, did you mean @name?');
+  t.is(error.message, 'Unknown metadata: @advance');
+  t.is(error.args[1], 'advanced');
   t.is(drawRange(text, error.index), raw);
 });
 
