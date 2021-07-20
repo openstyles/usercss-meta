@@ -7,7 +7,6 @@ test("shouldn't match", t => {
   t.is(LevenshteinDistanceWithMax('water', 'water1', 0), false);
   t.is(LevenshteinDistanceWithMax('thea', 'ythee', 1), false);
   t.is(LevenshteinDistanceWithMax('12345', '567', 4), false);
-  t.is(LevenshteinDistanceWithMax('var', 'abc', 3), false);
 });
 
 test('should match', t => {
@@ -17,4 +16,5 @@ test('should match', t => {
   t.is(LevenshteinDistanceWithMax('thea', 'ythee', 2), true);
   t.is(LevenshteinDistanceWithMax('12345', '567', 5), true);
   t.is(LevenshteinDistanceWithMax('wayter', 'water', 1), true);
+  t.is(LevenshteinDistanceWithMax('var', 'abc', 3), true);
 });
