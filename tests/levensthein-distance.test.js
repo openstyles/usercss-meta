@@ -16,4 +16,5 @@ test('should match', t => {
   t.is(LevenshteinDistanceWithMax('wayer', 'water', 1), true);
   t.is(LevenshteinDistanceWithMax('thea', 'ythee', 2), true);
   t.is(LevenshteinDistanceWithMax('12345', '567', 5), true);
+  t.is(LevenshteinDistanceWithMax('wayter', 'water', 1), true);
 });
