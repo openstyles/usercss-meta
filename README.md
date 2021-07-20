@@ -243,7 +243,7 @@ Use this class to initiate a parse error.
 * `code` - error code.
 * `message` - error message.
 * `index` - the string index where the error occurs.
-* `args` - an array of values that is used to compose the error message. This allows other clients to generate i18n error message. If the error code is unknownXXX the last value of this array would be a suggestive change in which the correct value is set, if it couldn't be find it will be `undefined` and couldn't find an suggestive change.
+* `args` - an array of values that is used to compose the error message. This allows other clients to generate i18n error message.
 
 A table of errors thrown by the parser:
 
@@ -275,7 +275,7 @@ A table of errors thrown by the parser:
 |`missingMandatory`|A list of missing keys|This error doesn't have `err.index`.|
 |`missingValue`||Expect a non-whitespace value.|
 |`unknownJSONLiteral`|Literal value|JSON has only 3 literals: `true`, `false`, and `null`.|
-|`unknownMeta`|Key of unknown metadata|Unknown `@metadata`.|
+|`unknownMeta`|`[META_KEY, SUGGESTED_META_KEY]`|Unknown `@metadata`. It may suggest the correct metadata name if there is a typo. `SUGGESTED_META_KEY` can be null|
 |`unknownVarType`|`[META_KEY, VARIABLE_TYPE]`|Unknown variable type. `META_KEY` could be `var` or `advanced`.|
 
 ### util
