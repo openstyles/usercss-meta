@@ -254,7 +254,7 @@ test('suggestive metadata', t => {
   const error = t.throws(() => {
     parse(text, {unknownKey: 'throw', mandatoryKeys: []});
   });
-  t.is(error.message, 'Unknown metadata: @advance, did you mean @advanced');
+  t.is(error.message, 'Unknown metadata: @advance, did you mean @advanced?');
   t.is(error.args[1], 'advanced');
   t.is(drawRange(text, error.index), raw);
 });
