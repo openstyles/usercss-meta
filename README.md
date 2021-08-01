@@ -356,6 +356,11 @@ This repo includes 3 tests:
 
 ## Changelog
 
+* 0.12.0 (Aug 1, 2021)
+
+  - Add: detect typo in `unknownMeta` error.
+  - Change: `unknownMeta` error has two arguments now.
+
 * 0.11.0 (Jul 6, 2021)
 
   - Change: the version validator no longer follows semver strictly. Implement your own validator if you need strict version check.
