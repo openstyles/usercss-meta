@@ -86,6 +86,7 @@
       "node/no-path-concat": 0,
       "unicorn/catch-error-name": 0,
       "unicorn/explicit-length-check": 0,
+      "unicorn/new-for-builtins": 0,
       "unicorn/no-reduce": 0,
       "unicorn/no-array-for-each": 0,
       "unicorn/no-array-reduce": 0,

@@ -275,7 +275,7 @@ A table of errors thrown by the parser:
 |`missingMandatory`|A list of missing keys|This error doesn't have `err.index`.|
 |`missingValue`||Expect a non-whitespace value.|
 |`unknownJSONLiteral`|Literal value|JSON has only 3 literals: `true`, `false`, and `null`.|
-|`unknownMeta`|Key of unknown metadata|Unknown `@metadata`.|
+|`unknownMeta`|`[META_KEY, SUGGESTED_META_KEY]`|Unknown `@metadata`. It may suggest the correct metadata name if there is a typo. `SUGGESTED_META_KEY` can be null|
 |`unknownVarType`|`[META_KEY, VARIABLE_TYPE]`|Unknown variable type. `META_KEY` could be `var` or `advanced`.|
 
 ### util
