@@ -12,7 +12,6 @@ function base({
       format: 'iife',
       name: 'usercssMeta',
       freeze: false,
-      sourcemap: true,
       ...output
     },
     plugins: [
